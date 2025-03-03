@@ -23,34 +23,37 @@ const initialState: realtimeDataState = {
   error: null,
 };
 
+const generateMockRealtimeData = (): GroupedRegions => {
+  return {
+    R1: {
+      regionName: "Cardiology Ward",
+      regionCount: Math.floor(Math.random() * 30) + 1, // 1~30 랜덤
+      regionDrCount: Math.floor(Math.random() * 10) + 1, // 1~10 랜덤
+      polygon: ["37.1234", "127.5678"],
+      timestamp: [new Date().toISOString()],
+    },
+    R2: {
+      regionName: "Neurology Ward",
+      regionCount: Math.floor(Math.random() * 25) + 1, // 1~25 랜덤
+      regionDrCount: Math.floor(Math.random() * 5) + 1, // 1~5 랜덤
+      polygon: ["36.9876", "126.5432"],
+      timestamp: [new Date().toISOString()],
+    },
+    R3: {
+      regionName: "Emergency Room",
+      regionCount: Math.floor(Math.random() * 40) + 1, // 1~40 랜덤
+      regionDrCount: Math.floor(Math.random() * 15) + 1, // 1~15 랜덤
+      polygon: ["37.7890", "127.4321"],
+      timestamp: [new Date().toISOString()],
+    },
+  };
+};
+
 const fetchRealtimeData = createAsyncThunk(
   "realtimeData/fetchRealtimeData",
   async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    const mockRealtimeData: GroupedRegions = {
-      R1: {
-        regionName: "Cardiology Ward",
-        regionCount: 20,
-        regionDrCount: 5,
-        polygon: ["37.1234", "127.5678"],
-        timestamp: ["2025-03-03T12:00:00Z", "2025-03-03T12:30:00Z"],
-      },
-      R2: {
-        regionName: "Neurology Ward",
-        regionCount: 15,
-        regionDrCount: 3,
-        polygon: ["36.9876", "126.5432"],
-        timestamp: ["2025-03-03T13:00:00Z"],
-      },
-      R3: {
-        regionName: "Emergency Room",
-        regionCount: 30,
-        regionDrCount: 10,
-        polygon: ["37.7890", "127.4321"],
-        timestamp: ["2025-03-03T14:00:00Z"],
-      },
-    };
-    return mockRealtimeData;
+    return generateMockRealtimeData();
   }
 );
 
