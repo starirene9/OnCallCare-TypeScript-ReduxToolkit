@@ -12,7 +12,7 @@ const Nav = () => {
 
   return (
     <nav
-      className={`bg-gray-800 text-white fixed left-0 top-20 h-[calc(100vh-5rem)] p-6 flex flex-col space-y-4 transition-all duration-300 ${
+      className={`bg-gray-800 text-white fixed left-0 top-20 h-[calc(100vh-5rem)] p-6 flex flex-col space-y-4 transition-all duration-300 z-50  ${
         isOpen ? "w-44" : "w-22"
       }`}
     >
@@ -45,7 +45,7 @@ const Nav = () => {
         {isOpen && <span>Doctors</span>}
       </Link>
       <button
-        className="mt-auto rounded-md hover:bg-gray-700 flex items-center justify-center"
+        className="mt-auto mb-4 p-2 rounded-md hover:bg-gray-700 flex items-center justify-center"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
