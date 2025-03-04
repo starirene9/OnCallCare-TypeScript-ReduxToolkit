@@ -8,7 +8,7 @@ import Nav from "./components/ui/Nav";
 import Footer from "./components/ui/Footer";
 
 // 페이지 컴포넌트
-import RealtimeDashboard from "./pages/realtimeDashboard/realtime-dashboard";
+import RealtimeDashboard from "./pages/realtimeDashboard/RealtimeDashboard";
 import Patients from "./pages/patients/patients";
 import Alerts from "./pages/alerts/alerts";
 import Doctors from "./pages/doctors/doctors";
@@ -21,7 +21,7 @@ function App() {
           <Header />
           <div className="flex flex-1">
             <Nav />
-            <main className="ml-48 mt-20 p-5 flex-1">
+            <main className="ml-44 mt-20 p-5 flex-1 overflow-y-auto h-[calc(100vh-120px)]">
               <Routes>
                 <Route path="/" element={<RealtimeDashboard />} />
                 <Route path="/patients" element={<Patients />} />
