@@ -1,7 +1,7 @@
 import React from "react";
 
-const patientsHistory = () => {
-  return <div></div>;
+const PatientsRoutes = () => {
+  return <div>PatientsRoutes</div>;
 };
 
-export default patientsHistory;
+export default PatientsRoutes;

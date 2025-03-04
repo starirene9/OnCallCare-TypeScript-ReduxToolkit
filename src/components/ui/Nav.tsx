@@ -5,6 +5,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import MapIcon from "@mui/icons-material/Map";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNav } from "../../context/NavContext";
@@ -18,6 +20,12 @@ const Nav = () => {
     { to: "/patients", icon: <PeopleIcon />, label: "Patients" },
     { to: "/alerts", icon: <NotificationsActiveIcon />, label: "Alerts" },
     { to: "/doctors", icon: <LocalHospitalIcon />, label: "Doctors" },
+    {
+      to: "/emergency-broadcast",
+      icon: <CampaignIcon />,
+      label: "Emergency Broadcast",
+    },
+    { to: "/nearby-hospitals", icon: <MapIcon />, label: "Nearby Hospitals" },
   ];
 
   return (
