@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,7 +13,11 @@ interface WeatherData {
   name: string;
 }
 
-const Header = () => {
+const Header = ({
+  setIsAuthenticated,
+}: {
+  setIsAuthenticated: (auth: boolean) => void;
+}) => {
   const [timestamp, setTimestamp] = useState(new Date().toLocaleString());
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -59,15 +64,15 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    console.log("User logged out");
-    setAnchorEl(null);
-    // 실제 로그아웃 로직 추가 가능 (ex: localStorage.clear(), navigate('/login'))
+    localStorage.removeItem("isLoggedIn"); // 로그인 정보 삭제
+    setIsAuthenticated(false); // 상태 업데이트
+    <Navigate to="/login" />;
   };
 
   // 언어 변경 버튼 클릭
   const toggleLanguage = () => {
     setLanguage((prevLang) => (prevLang === "Kor" ? "Eng" : "Kor"));
-    console.log(`Language switched to: ${language}`);
+    // console.log(`Language switched to: ${language}`);
     // 다국어 라이브러리 (i18next 등) 적용 가능
   };
 

@@ -3,7 +3,7 @@ import { Grid, Paper } from "@mui/material";
 import HospitalsCard from "./HospitalsCard";
 import HospitalsMap from "./HospitalsMap";
 
-const hospitals = () => {
+const Hospitals = () => {
   return (
     <Grid container spacing={2} sx={{ height: "100%" }}>
       <Grid item xs={12} md={8}>
@@ -20,4 +20,4 @@ const hospitals = () => {
   );
 };
 
-export default hospitals;
+export default Hospitals;
