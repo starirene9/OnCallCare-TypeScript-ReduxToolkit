@@ -7,9 +7,10 @@ import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { useNav } from "../../context/NavContext";
 
 const Nav = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const { isOpen, setIsOpen } = useNav();
   const location = useLocation(); // 현재 URL 경로 가져오기
 
   const navItems = [
