@@ -12,7 +12,7 @@ const Main = () => {
 
   return (
     <main
-      className={`transition-all duration-300 mt-20 p-3 flex-1 overflow-y-auto h-[calc(100vh-110px)] bg-gray-100 ${
+      className={`transition-all duration-300 mt-20 p-3 flex-1 overflow-y-auto h-[calc(100vh-128px)] bg-gray-100 ${
         isOpen ? "ml-44" : "ml-22"
       }`}
     >

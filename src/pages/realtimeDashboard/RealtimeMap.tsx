@@ -32,12 +32,18 @@ const TreemapChart = () => {
 
   console.log("treemap", treemapData);
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+      minWidth={200}
+      minHeight={200}
+    >
       <Treemap
         data={treemapData}
         dataKey="size"
         nameKey="name"
         stroke="#fff"
+        fill="#8884d8"
         content={<CustomTreemapCell />}
       >
         <Tooltip

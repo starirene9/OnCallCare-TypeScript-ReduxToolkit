@@ -6,8 +6,8 @@ import { Typography } from "@mui/material";
 
 const RealtimeDashboard = () => {
   return (
-    <Grid container spacing={2} sx={{ height: "100%" }}>
-      <Grid item xs={12} md={6}>
+    <Grid container sx={{ height: "100%" }}>
+      <Grid item xs={12} md={6} sx={{ pr: 2 }}>
         <Paper sx={{ height: "100%", p: 2 }}>
           <RealtimeMap />
         </Paper>
@@ -17,11 +17,10 @@ const RealtimeDashboard = () => {
         xs={12}
         md={6}
         container
-        spacing={2}
         direction="column"
         sx={{ height: "100%" }}
       >
-        <Grid item xs={6} sx={{ height: "50%" }}>
+        <Grid item xs={7} sx={{ mb: 2 }}>
           <Paper
             sx={{
               height: "100%",
@@ -36,7 +35,7 @@ const RealtimeDashboard = () => {
             <RealtimeCount />
           </Paper>
         </Grid>
-        <Grid item xs={6} sx={{ height: "50%" }}>
+        <Grid item sx={{ height: "calc(100% * 5 / 12 - 16px)" }}>
           <Paper
             sx={{
               height: "100%",

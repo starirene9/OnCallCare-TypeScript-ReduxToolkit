@@ -21,16 +21,16 @@ export const CustomTreemapCell = (props: any) => {
             y={y + height / 2 - 5}
             textAnchor="middle"
             fill="#fff"
-            fontSize={14}
+            fontSize={18}
           >
             {name}
           </text>
           <text
             x={x + width / 2}
-            y={y + height / 2 + 14} //
+            y={y + height / 2 + 18} //
             textAnchor="middle"
             fill="white"
-            fontSize={12}
+            fontSize={16}
           >
             {size}
           </text>
