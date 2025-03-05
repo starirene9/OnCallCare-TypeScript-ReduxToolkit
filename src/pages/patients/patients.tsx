@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Grid, Paper, TextField } from "@mui/material";
 import PatientsCard from "./PatientsCard";
-import PatientsRoutes from "./PatientsRoutes";
+import PatientsTable from "./PatientsTable";
 
 const Patients: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,7 +27,7 @@ const Patients: React.FC = () => {
       </Grid>
       <Grid item xs={12} md={8} sx={{ height: "calc(100% - 30px)" }}>
         <Paper sx={{ p: 2, height: "calc(100% - 30px)" }}>
-          <PatientsRoutes searchTerm={searchTerm} />
+          <PatientsTable searchTerm={searchTerm} />
         </Paper>
       </Grid>
     </Grid>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -23,6 +23,7 @@ const Header = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [language, setLanguage] = useState("Kor");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,12 +65,11 @@ const Header = ({
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn"); // 로그인 정보 삭제
-    setIsAuthenticated(false); // 상태 업데이트
-    <Navigate to="/login" />;
+    localStorage.removeItem("isLoggedIn");
+    setIsAuthenticated(false);
+    navigate("/login");
   };
 
-  // 언어 변경 버튼 클릭
   const toggleLanguage = () => {
     setLanguage((prevLang) => (prevLang === "Kor" ? "Eng" : "Kor"));
     // console.log(`Language switched to: ${language}`);

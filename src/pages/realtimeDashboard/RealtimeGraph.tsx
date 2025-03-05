@@ -1,7 +1,7 @@
 import React from "react";
 
-const RealtimeGraph = () => {
-  return <div>RealtimeGraph</div>;
+const PatientHistoryGraph = () => {
+  return <div>Patient History Graph</div>;
 };
 
-export default RealtimeGraph;
+export default PatientHistoryGraph;
