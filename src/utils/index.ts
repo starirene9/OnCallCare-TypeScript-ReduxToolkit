@@ -10,15 +10,3 @@ export const HEATMAP_COLORS = [
   "#FF4500", // 9. 주황-빨강
   "#FF0000", // 10. 빨강 (최대값)
 ];
-
-export const getHeatmapColor = (value: number, min: number, max: number) => {
-  if (max === min) return HEATMAP_COLORS[HEATMAP_COLORS.length - 1];
-
-  const step = (max - min) / (HEATMAP_COLORS.length - 1);
-  const index = Math.min(
-    HEATMAP_COLORS.length - 1,
-    Math.floor((value - min) / step)
-  );
-
-  return HEATMAP_COLORS[index];
-};

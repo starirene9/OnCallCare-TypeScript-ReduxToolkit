@@ -23,11 +23,14 @@ const TreemapChart = () => {
     return <Typography color="error">{error}</Typography>;
   }
 
-  const treemapData = Object.keys(realtimeData).map((key) => ({
-    name: realtimeData[key].regionName,
-    size: realtimeData[key].regionCount,
-  }));
+  const treemapData = Object.keys(realtimeData)
+    .map((key) => ({
+      name: realtimeData[key].regionName,
+      size: realtimeData[key].regionCount,
+    }))
+    .sort((a, b) => b.size - a.size);
 
+  console.log("treemap", treemapData);
   return (
     <ResponsiveContainer width="100%" height="100%">
       <Treemap

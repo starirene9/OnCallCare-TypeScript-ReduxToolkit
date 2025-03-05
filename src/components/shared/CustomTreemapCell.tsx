@@ -1,10 +1,8 @@
-import { getHeatmapColor } from "../../utils";
+import { HEATMAP_COLORS } from "../../utils";
 
 export const CustomTreemapCell = (props: any) => {
-  const { x, y, width, height, name, size, root } = props;
-  const minSize = Math.min(...root.children.map((d: any) => d.size));
-  const maxSize = Math.max(...root.children.map((d: any) => d.size));
-  const color = getHeatmapColor(size, minSize, maxSize);
+  const { x, y, width, height, name, size, index } = props;
+  const color = HEATMAP_COLORS[index % HEATMAP_COLORS.length];
 
   return (
     <g>
