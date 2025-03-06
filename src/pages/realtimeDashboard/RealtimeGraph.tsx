@@ -28,6 +28,12 @@ const PatientHistoryGraph: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchRealtimeHistoryData());
+
+    const interval = setInterval(() => {
+      dispatch(fetchRealtimeHistoryData());
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, [dispatch]);
 
   useEffect(() => {
