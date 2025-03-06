@@ -6,7 +6,7 @@ export interface GroupedRegions {
     regionName: string;
     regionCount: number;
     regionDrCount: number;
-    polygon: [string, string];
+    polygon: string[];
     timestamp: string[];
   };
 }

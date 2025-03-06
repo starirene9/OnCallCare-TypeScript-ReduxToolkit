@@ -41,7 +41,7 @@ const renderActiveShape = (props: any) => {
 
   return (
     <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+      <text x={cx} y={cy} dy={8} textAnchor="middle" fontSize={14} fill="#333">
         {payload.name}
       </text>
       <Sector
@@ -108,7 +108,6 @@ const PatientDoctorRatio: React.FC = () => {
     }))
     .sort((a, b) => b.value - a.value);
 
-  console.log(pieData);
   if (loading) {
     return <LinearProgress />;
   }
