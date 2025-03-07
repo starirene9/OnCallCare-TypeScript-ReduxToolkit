@@ -50,6 +50,7 @@ const TreemapChart = () => {
           contentStyle={{
             fontSize: "12px",
             padding: "7px",
+            borderRadius: "4px",
           }}
         />
       </Treemap>

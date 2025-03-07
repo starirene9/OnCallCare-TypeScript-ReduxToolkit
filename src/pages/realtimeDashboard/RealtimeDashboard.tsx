@@ -20,7 +20,7 @@ const RealtimeDashboard = () => {
         direction="column"
         sx={{ height: "100%" }}
       >
-        <Grid item xs={7} sx={{ mb: 2 }}>
+        <Grid item xs={6} sx={{ mb: 2 }}>
           <Paper
             sx={{
               height: "100%",
@@ -29,13 +29,13 @@ const RealtimeDashboard = () => {
               flexDirection: "column",
             }}
           >
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="subtitle1" sx={{ mb: 2, color: "#3c4b64" }}>
               Real-time Patients-to-Doctors Ratio
             </Typography>
             <RealtimeCount />
           </Paper>
         </Grid>
-        <Grid item sx={{ height: "calc(100% * 5 / 12 - 16px)" }}>
+        <Grid item sx={{ height: "calc(100% * 6 / 12 - 17px)" }}>
           <Paper
             sx={{
               height: "100%",
@@ -44,7 +44,7 @@ const RealtimeDashboard = () => {
               flexDirection: "column",
             }}
           >
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="subtitle1" sx={{ mb: 2, color: "#3c4b64" }}>
               Patient Visit History
             </Typography>
             <RealtimeGraph />
