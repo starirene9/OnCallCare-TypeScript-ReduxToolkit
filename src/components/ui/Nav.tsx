@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -10,23 +9,37 @@ import MapIcon from "@mui/icons-material/Map";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNav } from "../../context/NavContext";
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 const Nav = () => {
   const { isOpen, setIsOpen } = useNav();
   const location = useLocation(); // 현재 URL 경로 가져오기
+  const [storedValue] = useLocalStorage("username", "");
+  let navItems = [];
 
-  const navItems = [
-    { to: "/", icon: <DashboardIcon />, label: "Dashboard" },
-    { to: "/patients", icon: <PeopleIcon />, label: "Patients" },
-    { to: "/alerts", icon: <NotificationsActiveIcon />, label: "Alerts" },
-    { to: "/doctors", icon: <LocalHospitalIcon />, label: "Doctors" },
-    {
-      to: "/emergency-broadcast",
-      icon: <CampaignIcon />,
-      label: "Emergency Broadcast",
-    },
-    { to: "/nearby-hospitals", icon: <MapIcon />, label: "Nearby Hospitals" },
-  ];
+  storedValue === "admin"
+    ? (navItems = [
+        { to: "/", icon: <DashboardIcon />, label: "Dashboard" },
+        { to: "/patients", icon: <PeopleIcon />, label: "Patients" },
+        { to: "/alerts", icon: <NotificationsActiveIcon />, label: "Alerts" },
+        { to: "/doctors", icon: <LocalHospitalIcon />, label: "Doctors" },
+        {
+          to: "/emergency-broadcast",
+          icon: <CampaignIcon />,
+          label: "Emergency Broadcast",
+        },
+        {
+          to: "/nearby-hospitals",
+          icon: <MapIcon />,
+          label: "Nearby Hospitals",
+        },
+      ])
+    : (navItems = [
+        { to: "/", icon: <DashboardIcon />, label: "Dashboard" },
+        { to: "/patients", icon: <PeopleIcon />, label: "Patients" },
+        { to: "/alerts", icon: <NotificationsActiveIcon />, label: "Alerts" },
+        { to: "/doctors", icon: <LocalHospitalIcon />, label: "Doctors" },
+      ]);
 
   return (
     <nav

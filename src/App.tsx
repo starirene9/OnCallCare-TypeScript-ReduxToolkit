@@ -21,6 +21,7 @@ export interface AuthProps {
   isAuthenticatedLS?: boolean;
   setIsAuthenticatedLS: (auth: boolean) => void;
 }
+
 function App() {
   const [isAuthenticatedLS, setIsAuthenticatedLS] = useLocalStorage(
     "isLoggedIn",
