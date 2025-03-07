@@ -4,6 +4,8 @@ import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { IconButton, Button, ButtonGroup } from "@mui/material";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import { AuthProps } from "../../App";
 
 const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
@@ -13,15 +15,12 @@ interface WeatherData {
   name: string;
 }
 
-const Header = ({
-  setIsAuthenticated,
-}: {
-  setIsAuthenticated: (auth: boolean) => void;
-}) => {
+const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
   const [timestamp, setTimestamp] = useState(new Date().toLocaleString());
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [storedUserName] = useLocalStorage("username", "Guest");
   const [language, setLanguage] = useState("Kor");
   const navigate = useNavigate();
 
@@ -65,8 +64,9 @@ const Header = ({
   };
 
   const handleLogout = () => {
+    setIsAuthenticatedLS(false);
     localStorage.removeItem("isLoggedIn");
-    setIsAuthenticated(false);
+    localStorage.removeItem("username");
     navigate("/login");
   };
 
@@ -123,6 +123,12 @@ const Header = ({
           onClose={handleCloseMenu}
           onMouseLeave={handleCloseMenu}
         >
+          <MenuItem
+            onClick={(e) => e.preventDefault()}
+            sx={{ pointerEvents: "none" }}
+          >
+            Hello, {storedUserName} 👋
+          </MenuItem>
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </div>

@@ -10,17 +10,16 @@ import {
   Paper,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import { AuthProps } from "../../App";
 
-const Login = ({
-  setIsAuthenticated,
-}: {
-  setIsAuthenticated: (auth: boolean) => void;
-}) => {
+const Login: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [storedUserName, setStoredUserName] = useLocalStorage("username", "");
   const navigate = useNavigate();
 
   const adminAccount = {
@@ -47,8 +46,8 @@ const Login = ({
     ) {
       alert("Login Successful!");
 
-      localStorage.setItem("isLoggedIn", "true");
-      setIsAuthenticated(true);
+      setIsAuthenticatedLS(true);
+      setStoredUserName(credentials.username);
       navigate("/");
     } else {
       alert("Invalid username or password");
