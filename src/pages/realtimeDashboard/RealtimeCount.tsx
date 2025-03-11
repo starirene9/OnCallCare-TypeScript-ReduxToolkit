@@ -2,16 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRealtimeData } from "../../features/realtimeDashboard/realtime-slice";
 import { RootState, AppDispatch } from "../../store/store";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Sector,
-  Tooltip,
-  Cell,
-} from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Sector, Cell } from "recharts";
 import { Typography, LinearProgress } from "@mui/material";
 import { HEATMAP_COLORS } from "../../utils";
+import BasicCard from "../../components/shared/BasicCard";
 
 const renderActiveShape = (props: any) => {
   const RADIAN = Math.PI / 180;
@@ -41,7 +35,7 @@ const renderActiveShape = (props: any) => {
 
   return (
     <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fontSize={14} fill="#333">
+      <text x={cx} y={cy} dy={8} textAnchor="middle" fontSize={12} fill="#333">
         {payload.name}
       </text>
       <Sector
@@ -116,34 +110,56 @@ const PatientDoctorRatio: React.FC = () => {
   }
 
   return (
-    <ResponsiveContainer
-      width="100%"
-      height="100%"
-      minWidth={200}
-      minHeight={200}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        height: "auto",
+      }}
     >
-      <PieChart>
-        <Pie
-          activeIndex={activeIndex}
-          activeShape={renderActiveShape}
-          data={pieData}
-          cx="50%"
-          cy="50%"
-          innerRadius={60}
-          outerRadius={80}
-          fill="#8884d8"
-          dataKey="value"
-          onMouseEnter={(_, index) => setActiveIndex(index)}
+      <div
+        style={{
+          flexBasis: "70%",
+          flexGrow: 1,
+          height: "100%",
+          // border: "1px solid red",
+        }}
+      >
+        <ResponsiveContainer
+          width="100%"
+          height="95%"
+          minWidth={200}
+          minHeight={200}
         >
-          {pieData.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
-            />
-          ))}
-        </Pie>
-      </PieChart>
-    </ResponsiveContainer>
+          <PieChart>
+            <Pie
+              activeIndex={activeIndex}
+              activeShape={renderActiveShape}
+              data={pieData}
+              cx="50%"
+              cy="50%"
+              innerRadius={50}
+              outerRadius={70}
+              fill="#8884d8"
+              dataKey="value"
+              onMouseEnter={(_, index) => setActiveIndex(index)}
+            >
+              {pieData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
+                />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div style={{ flexBasis: "30%", flexGrow: 1 }}>
+        <BasicCard />
+      </div>
+    </div>
   );
 };
 
