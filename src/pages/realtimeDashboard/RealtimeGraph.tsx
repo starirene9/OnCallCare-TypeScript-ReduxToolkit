@@ -24,13 +24,19 @@ const PatientHistoryGraph: React.FC = () => {
   const [chartData, setChartData] = useState<
     { time: string; formattedTime: string; [key: string]: number | string }[]
   >([]);
+
+  const [checked, setChecked] = useState<boolean>(false);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
+
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(fetchRealtimeHistoryData());
 
     const interval = setInterval(() => {
-      // console.log("It runs every 1 min!");
       dispatch(fetchRealtimeHistoryData());
     }, 60000);
 
@@ -61,53 +67,88 @@ const PatientHistoryGraph: React.FC = () => {
           formattedTime: timestamp?.formattedTime,
         };
 
-        regionIds.forEach((regionId) => {
-          const countArray = realtimeHistoryData[regionId]?.regionCount;
-          dataPoint[regionId] =
-            countArray && countArray[index] !== null ? countArray[index] : 0;
-        });
+        if (checked) {
+          const totalPatients = regionIds.reduce((sum, regionId) => {
+            const countArray = realtimeHistoryData[regionId]?.regionCount;
+            return (
+              sum +
+              (countArray && countArray[index] !== null ? countArray[index] : 0)
+            );
+          }, 0);
+          dataPoint["Total Patients"] = totalPatients; // ✅ 총합 데이터 추가
+        } else {
+          regionIds.forEach((regionId) => {
+            const countArray = realtimeHistoryData[regionId]?.regionCount;
+            dataPoint[regionId] =
+              countArray && countArray[index] !== null ? countArray[index] : 0;
+          });
+        }
 
         return dataPoint;
       });
 
       setChartData(transformedData);
     }
-  }, [realtimeHistoryData]);
+  }, [realtimeHistoryData, checked]); // ✅ checked 값이 변경될 때마다 업데이트
 
-  interface CustomTooltipPayload {
-    color?: string;
-    name?: string;
-    value?: number;
-    payload?: { timestamp?: string };
+  interface CustomTooltipProps extends TooltipProps<number, string> {
+    checked: boolean;
   }
 
-  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
+  const CustomTooltip: React.FC<CustomTooltipProps> = ({
     active,
     payload,
-  }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div
+    checked,
+  }) => {
+    if (!active || !payload || payload.length === 0) return null;
+
+    return (
+      <div
+        style={{
+          background: "white",
+          border: "1px solid #ccc",
+          padding: "10px",
+          paddingLeft: "16px",
+          paddingRight: "16px",
+          borderRadius: "4px",
+        }}
+      >
+        <p style={{ fontWeight: "bold", marginBottom: "4px" }}>
+          {payload[0]?.payload?.time ?? "N/A"}
+        </p>
+        <hr
           style={{
-            background: "white",
-            border: "1px solid #ccc",
-            padding: "10px",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            borderRadius: "4px",
+            margin: "4px 0",
+            border: "0",
+            borderTop: "1px solid #ccc",
           }}
-        >
-          <p style={{ fontWeight: "bold", marginBottom: "4px" }}>
-            {payload[0]?.payload?.time ?? "N/A"}
-          </p>
-          <hr
-            style={{
-              margin: "4px 0",
-              border: "0",
-              borderTop: "1px solid #ccc",
-            }}
-          />
-          {(payload as CustomTooltipPayload[])
+        />
+
+        {checked ? (
+          <div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "4px",
+              }}
+            >
+              <div
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  borderRadius: "50%",
+                  backgroundColor: "var(--color-blue)",
+                  marginRight: "8px",
+                }}
+              />
+              <span style={{ color: "black" }}>
+                Total Patients: {payload[0]?.value}
+              </span>
+            </div>
+          </div>
+        ) : (
+          payload
             .slice()
             .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
             .map((entry, index) => (
@@ -134,12 +175,10 @@ const PatientHistoryGraph: React.FC = () => {
                   {entry.name}: {entry.value}
                 </span>
               </div>
-            ))}
-        </div>
-      );
-    }
-
-    return null;
+            ))
+        )}
+      </div>
+    );
   };
 
   if (loading) {
@@ -160,6 +199,8 @@ const PatientHistoryGraph: React.FC = () => {
       >
         <FormControlLabelPosition
           name="Total Patients"
+          checked={checked}
+          handleChange={handleChange}
           labelStyle={{ fontSize: "0.8rem", color: "var(--color-gray)" }}
         />
       </div>
@@ -181,40 +222,29 @@ const PatientHistoryGraph: React.FC = () => {
             interval="preserveStartEnd"
           />
           <YAxis />
-          {/* <Tooltip
-          labelStyle={{ fontWeight: "bold" }}
-          labelFormatter={(label) => (
-            <div>
-              <span style={{ fontWeight: "bold" }}>{label}</span>
-              <hr
-                style={{
-                  margin: "4px 0",
-                  border: "0",
-                  borderTop: "1px solid #ccc",
-                }}
-              />
-            </div>
-          )}
-          contentStyle={{
-            paddingLeft: "22px",
-            paddingRight: "22px",
-            paddingBottom: "5px",
-          }}
-          itemStyle={{ border: "1px solid red" }}
-          itemSorter={(item) => -(item?.value ?? 0)}
-        /> */}
-          <Tooltip content={<CustomTooltip />} />
-          {Object.keys(realtimeHistoryData).map((regionId, index) => (
+          <Tooltip content={<CustomTooltip checked={checked} />} />
+          {checked ? (
             <Line
-              key={regionId}
               type="monotone"
-              dataKey={regionId}
-              stroke={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
+              dataKey="Total Patients"
+              stroke="var(--color-blue)"
               strokeWidth={2}
               dot={false}
-              name={realtimeHistoryData[regionId].regionName}
+              name="Total Patients"
             />
-          ))}
+          ) : (
+            Object.keys(realtimeHistoryData).map((regionId, index) => (
+              <Line
+                key={regionId}
+                type="monotone"
+                dataKey={regionId}
+                stroke={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
+                strokeWidth={2}
+                dot={false}
+                name={realtimeHistoryData[regionId].regionName}
+              />
+            ))
+          )}
         </LineChart>
       </ResponsiveContainer>
     </>
