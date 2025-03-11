@@ -6,6 +6,14 @@ import { ResponsiveContainer, PieChart, Pie, Sector, Cell } from "recharts";
 import { Typography, LinearProgress } from "@mui/material";
 import { HEATMAP_COLORS } from "../../utils";
 import BasicCard from "../../components/shared/BasicCard";
+import { getTimeAgo } from "../../utils";
+
+interface PieData {
+  name: string;
+  value: number;
+  doctorCount: number;
+  timeStamp: string;
+}
 
 const renderActiveShape = (props: any) => {
   const RADIAN = Math.PI / 180;
@@ -89,18 +97,31 @@ const PatientDoctorRatio: React.FC = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const [activeIndex, setActiveIndex] = useState<number | 0>(0);
+  const [timeAgo, setTimeAgo] = useState("");
 
   useEffect(() => {
     dispatch(fetchRealtimeData());
   }, []);
 
-  const pieData = Object.keys(realtimeData)
-    .map((key, index) => ({
+  const pieData: PieData[] = Object.keys(realtimeData)
+    .map((key) => ({
       name: realtimeData[key].regionName,
       value: realtimeData[key].regionCount, // patients count
       doctorCount: realtimeData[key].regionDrCount, // doctors count
+      timeStamp: realtimeData[key].timestamp,
     }))
     .sort((a, b) => b.value - a.value);
+
+  useEffect(() => {
+    const updateAgo = () => {
+      const newTimeAgo = getTimeAgo(pieData[activeIndex]?.timeStamp);
+      setTimeAgo(newTimeAgo);
+    };
+    updateAgo();
+    const interval = setInterval(updateAgo, 60000);
+
+    return () => clearInterval(interval);
+  }, [pieData, getTimeAgo]);
 
   if (loading) {
     return <LinearProgress />;
@@ -124,7 +145,6 @@ const PatientDoctorRatio: React.FC = () => {
           flexBasis: "70%",
           flexGrow: 1,
           height: "100%",
-          // border: "1px solid red",
         }}
       >
         <ResponsiveContainer
@@ -153,6 +173,18 @@ const PatientDoctorRatio: React.FC = () => {
                 />
               ))}
             </Pie>
+            {pieData[activeIndex] &&
+              getTimeAgo(pieData[activeIndex].timeStamp) !== "" && (
+                <text
+                  x="90%"
+                  y="99%"
+                  textAnchor="middle"
+                  fontSize="12"
+                  fill="#666"
+                >
+                  {timeAgo}
+                </text>
+              )}
           </PieChart>
         </ResponsiveContainer>
       </div>

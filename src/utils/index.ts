@@ -10,3 +10,13 @@ export const HEATMAP_COLORS = [
   "#B22222", // 9. 불타는 빨강 (붉은 계열)
   "#FFD700", // 10. 황금색 (노랑 계열)
 ];
+
+export const getTimeAgo = (timestamp: string): string => {
+  const now = new Date();
+  const time = new Date(timestamp);
+  const diff = Math.floor((now.getTime() - time.getTime()) / 1000); // 초 단위 차이
+
+  if (diff < 60) return `${diff} sec ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+  return `${Math.floor(diff / 3600)} hours ago`;
+};
