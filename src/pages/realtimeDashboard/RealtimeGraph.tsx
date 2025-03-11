@@ -14,6 +14,7 @@ import { RootState, AppDispatch } from "../../store/store";
 import { fetchRealtimeHistoryData } from "../../features/realtimeDashboard/realtime-history-slice";
 import { Typography, LinearProgress } from "@mui/material";
 import { HEATMAP_COLORS } from "../../utils";
+import FormControlLabelPosition from "../../components/shared/Switch";
 
 const PatientHistoryGraph: React.FC = () => {
   const { realtimeHistoryData, loading, error } = useSelector(
@@ -23,7 +24,6 @@ const PatientHistoryGraph: React.FC = () => {
   const [chartData, setChartData] = useState<
     { time: string; formattedTime: string; [key: string]: number | string }[]
   >([]);
-
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -150,25 +150,38 @@ const PatientHistoryGraph: React.FC = () => {
   }
 
   return (
-    <ResponsiveContainer
-      width="100%"
-      height="100%"
-      minWidth={200}
-      minHeight={200}
-    >
-      <LineChart
-        data={chartData}
-        margin={{ top: 5, right: 30, left: -2, bottom: 5 }}
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          paddingRight: "20px",
+        }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          dataKey="formattedTime"
-          tickSize={8}
-          includeHidden
-          interval="preserveStartEnd"
+        <FormControlLabelPosition
+          name="Total Patients"
+          labelStyle={{ fontSize: "0.8rem", color: "var(--color-gray)" }}
         />
-        <YAxis />
-        {/* <Tooltip
+      </div>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={200}
+        minHeight={200}
+      >
+        <LineChart
+          data={chartData}
+          margin={{ top: 5, right: 30, left: -2, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="formattedTime"
+            tickSize={8}
+            includeHidden
+            interval="preserveStartEnd"
+          />
+          <YAxis />
+          {/* <Tooltip
           labelStyle={{ fontWeight: "bold" }}
           labelFormatter={(label) => (
             <div>
@@ -190,20 +203,21 @@ const PatientHistoryGraph: React.FC = () => {
           itemStyle={{ border: "1px solid red" }}
           itemSorter={(item) => -(item?.value ?? 0)}
         /> */}
-        <Tooltip content={<CustomTooltip />} />
-        {Object.keys(realtimeHistoryData).map((regionId, index) => (
-          <Line
-            key={regionId}
-            type="monotone"
-            dataKey={regionId}
-            stroke={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
-            strokeWidth={2}
-            dot={false}
-            name={realtimeHistoryData[regionId].regionName}
-          />
-        ))}
-      </LineChart>
-    </ResponsiveContainer>
+          <Tooltip content={<CustomTooltip />} />
+          {Object.keys(realtimeHistoryData).map((regionId, index) => (
+            <Line
+              key={regionId}
+              type="monotone"
+              dataKey={regionId}
+              stroke={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
+              strokeWidth={2}
+              dot={false}
+              name={realtimeHistoryData[regionId].regionName}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </>
   );
 };
 

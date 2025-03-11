@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+:root {
+  --color-navy: #3c4b64; /* 네이비 */
+  --color-blue: #007bff; /* 파란색 */
+  --color-gray: #6c757d; /* 회색 */
+  --color-white: #ffffff; /* 하얀색 */
+  --color-black: #000000; /* 검정색 */
+}
+
 html {
   font-size: 16px; /* 1rem = 16px */
 }

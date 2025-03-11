@@ -29,7 +29,10 @@ const RealtimeDashboard = () => {
               flexDirection: "column",
             }}
           >
-            <Typography variant="subtitle1" sx={{ mb: 2, color: "#3c4b64" }}>
+            <Typography
+              variant="subtitle1"
+              sx={{ mb: 2, color: "var(--color-navy)" }}
+            >
               Real-time Patients-to-Doctors Ratio
             </Typography>
             <RealtimeCount />
@@ -44,7 +47,10 @@ const RealtimeDashboard = () => {
               flexDirection: "column",
             }}
           >
-            <Typography variant="subtitle1" sx={{ mb: 2, color: "#3c4b64" }}>
+            <Typography
+              variant="subtitle1"
+              sx={{ mb: 1, color: "var(--color-navy)" }}
+            >
               Patient Visit History
             </Typography>
             <RealtimeGraph />
