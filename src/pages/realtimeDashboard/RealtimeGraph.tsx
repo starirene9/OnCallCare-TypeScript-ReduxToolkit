@@ -138,7 +138,7 @@ const PatientHistoryGraph: React.FC = () => {
                   width: "10px",
                   height: "10px",
                   borderRadius: "50%",
-                  backgroundColor: "var(--color-blue)",
+                  backgroundColor: "var(--color-dark-blue)",
                   marginRight: "8px",
                 }}
               />
@@ -227,7 +227,7 @@ const PatientHistoryGraph: React.FC = () => {
             <Line
               type="monotone"
               dataKey="Total Patients"
-              stroke="var(--color-blue)"
+              stroke="var(--color-dark-blue)"
               strokeWidth={2}
               dot={false}
               name="Total Patients"
