@@ -44,6 +44,7 @@ const TreemapChart = () => {
         nameKey="name"
         stroke="#fff"
         fill="#8884d8"
+        isAnimationActive={false}
         content={<CustomTreemapCell />}
       >
         <Tooltip

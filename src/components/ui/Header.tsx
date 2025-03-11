@@ -6,6 +6,8 @@ import MenuItem from "@mui/material/MenuItem";
 import { IconButton, Button, ButtonGroup } from "@mui/material";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { AuthProps } from "../../App";
+import userImage from "../../assets/user.png";
+import adminImage from "../../assets/admin.png";
 
 const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
@@ -21,7 +23,7 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [storedUserName] = useLocalStorage("username", "Guest");
-  const [language, setLanguage] = useState("Kor");
+  const [language, setLanguage] = useState("Eng");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,7 +79,7 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
   };
 
   return (
-    <header className="bg-blue-600 p-4 text-white fixed w-full top-0 h-20 flex items-center justify-between px-6">
+    <header className="bg-blue-800 p-4 text-white fixed w-full top-0 h-20 flex items-center justify-between px-6">
       <div className="left-22">
         <h1 className="text-lg font-bold">OnCall Care</h1>
         <p className="text-sm">
@@ -113,8 +115,12 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
         <IconButton onClick={handleOpenMenu} onMouseEnter={handleOpenMenu}>
           <Avatar
             alt="User Profile"
-            src="https://via.placeholder.com/150"
-            sx={{ width: 40, height: 40 }}
+            src={storedUserName === "admin" ? adminImage : userImage}
+            sx={{
+              width: 60,
+              height: 60,
+              border: "1px solid gray",
+            }}
           />
         </IconButton>
         <Menu
