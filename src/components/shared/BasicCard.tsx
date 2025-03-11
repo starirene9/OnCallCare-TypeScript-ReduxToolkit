@@ -2,7 +2,18 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-export default function BasicCard() {
+interface CardData {
+  name: string;
+  value: number;
+  doctorCount: number;
+}
+
+interface BasicCardProps {
+  data: CardData[];
+  activeIndex: number;
+}
+
+export default function BasicCard({ data, activeIndex }: BasicCardProps) {
   return (
     <div
       style={{
@@ -10,7 +21,6 @@ export default function BasicCard() {
         flexDirection: "column",
         width: "100%",
         gap: "10px",
-        // border: "1px solid red",
       }}
     >
       <Card
@@ -31,7 +41,7 @@ export default function BasicCard() {
             Patients Count
           </Typography>
           <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-            128
+            {data[activeIndex]?.value}
           </Typography>
         </CardContent>
       </Card>
@@ -53,7 +63,7 @@ export default function BasicCard() {
             Doctor's Count
           </Typography>
           <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-            15
+            {data[activeIndex]?.doctorCount}
           </Typography>
         </CardContent>
       </Card>

@@ -157,7 +157,7 @@ const PatientDoctorRatio: React.FC = () => {
         </ResponsiveContainer>
       </div>
       <div style={{ flexBasis: "30%", flexGrow: 1 }}>
-        <BasicCard />
+        <BasicCard data={pieData} activeIndex={activeIndex} />
       </div>
     </div>
   );
