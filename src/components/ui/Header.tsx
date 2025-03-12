@@ -9,45 +9,15 @@ import { AuthProps } from "../../App";
 import userImage from "../../assets/user.png";
 import adminImage from "../../assets/admin.png";
 import DigitalClock from "../shared/DigitalClock";
-
-const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
-
-interface WeatherData {
-  temp: number;
-  description: string;
-  name: string;
-}
+import OnCallCareLogo from "../../assets/OnCallCare.png";
+import Weather from "../shared/Weather";
 
 const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [storedUserName] = useLocalStorage("username", "Guest");
   const [language, setLanguage] = useState("Eng");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchWeather();
-    const weatherInterval = setInterval(fetchWeather, 60000); // 1분마다 갱신
-
-    return () => clearInterval(weatherInterval);
-  }, []);
-
-  const fetchWeather = async () => {
-    try {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&appid=${OPENWEATHER_API_KEY}`
-      );
-      const data = await response.json();
-      setWeather({
-        temp: data?.main?.temp,
-        description: data?.weather[0]?.description,
-        name: data?.name,
-      });
-    } catch (error) {
-      console.error("Error fetching weather data:", error);
-    }
-  };
 
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -74,14 +44,12 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
     <header className="bg-blue-800 p-4 text-white fixed w-full top-0 h-20 flex items-center justify-between px-6">
       <div className="flex items-center gap-8">
         <div className="left-22">
-          <h1 className="text-lg font-bold">OnCall Care</h1>
-          <p className="text-sm">
-            {weather
-              ? `${weather.name} ${weather.temp}°C, ${weather.description}`
-              : "Loading..."}
-          </p>
+          <img src={OnCallCareLogo} alt="OnCall Care" className="w-32 h-16" />
         </div>
-        <DigitalClock />
+        <div className="flex flex-col gap-1">
+          <DigitalClock />
+          <Weather />
+        </div>
       </div>
       <div className="flex items-center gap-4">
         <ButtonGroup variant="contained" size="small">

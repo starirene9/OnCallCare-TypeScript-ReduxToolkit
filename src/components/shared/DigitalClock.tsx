@@ -19,7 +19,7 @@ const DigitalClock: React.FC = () => {
   }, []);
 
   return (
-    <div className="text-l font-bold">
+    <div className="text-[0.95rem] font-bold">
       <div>{date}</div>
       <div>{time}</div>
     </div>
