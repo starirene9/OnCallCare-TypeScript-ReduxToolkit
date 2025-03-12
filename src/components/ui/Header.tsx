@@ -42,16 +42,16 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
 
   return (
     <header className="bg-blue-800 p-4 text-white fixed w-full top-0 h-20 flex items-center justify-between px-6">
-      <div className="flex items-center gap-8">
+      <div className="flex items-center gap-6">
         <div className="left-22">
           <img src={OnCallCareLogo} alt="OnCall Care" className="w-32 h-16" />
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col">
           <DigitalClock />
           <Weather />
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
         <ButtonGroup variant="contained" size="small">
           <Button
             onClick={() => setLanguage("Kor")}
