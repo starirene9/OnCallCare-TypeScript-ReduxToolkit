@@ -8,6 +8,7 @@ import useLocalStorage from "../../hooks/useLocalStorage";
 import { AuthProps } from "../../App";
 import userImage from "../../assets/user.png";
 import adminImage from "../../assets/admin.png";
+import DigitalClock from "../shared/DigitalClock";
 
 const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
@@ -18,21 +19,12 @@ interface WeatherData {
 }
 
 const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
-  const [timestamp, setTimestamp] = useState(new Date().toLocaleString());
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [storedUserName] = useLocalStorage("username", "Guest");
   const [language, setLanguage] = useState("Eng");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimestamp(new Date().toLocaleString());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     fetchWeather();
@@ -80,14 +72,16 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
 
   return (
     <header className="bg-blue-800 p-4 text-white fixed w-full top-0 h-20 flex items-center justify-between px-6">
-      <div className="left-22">
-        <h1 className="text-lg font-bold">OnCall Care</h1>
-        <p className="text-sm">
-          {timestamp} |{" "}
-          {weather
-            ? `${weather.name} ${weather.temp}°C, ${weather.description}`
-            : "Loading..."}
-        </p>
+      <div className="flex items-center gap-8">
+        <div className="left-22">
+          <h1 className="text-lg font-bold">OnCall Care</h1>
+          <p className="text-sm">
+            {weather
+              ? `${weather.name} ${weather.temp}°C, ${weather.description}`
+              : "Loading..."}
+          </p>
+        </div>
+        <DigitalClock />
       </div>
       <div className="flex items-center gap-4">
         <ButtonGroup variant="contained" size="small">
