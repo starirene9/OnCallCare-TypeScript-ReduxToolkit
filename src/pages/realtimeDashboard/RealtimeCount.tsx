@@ -72,11 +72,17 @@ const renderActiveShape = (props: any, intl: any) => {
         y={cy}
         dy={8}
         textAnchor="middle"
-        fontSize={13}
+        fontSize="1rem"
         fontWeight="bold"
         fill="#333"
       >
-        {payload.name}
+        {payload.name
+          .split(" ")
+          .map((word: string, index: number, array: string[]) => (
+            <tspan key={index} x={cx} dy={index === 0 ? 8 : 16}>
+              {word}
+            </tspan>
+          ))}
       </text>
       <Sector
         cx={cx}
@@ -116,7 +122,7 @@ const renderActiveShape = (props: any, intl: any) => {
       >
         {`${intl.formatMessage({ id: "patient_percentage" })}: ${(
           percent * 100
-        ).toFixed(2)}%`}
+        ).toFixed(1)}%`}
       </text>
     </g>
   );
@@ -195,7 +201,7 @@ const PatientDoctorRatio: React.FC = () => {
               data={pieData}
               cx="50%"
               cy="50%"
-              innerRadius={60}
+              innerRadius={55}
               outerRadius={80}
               fill="#8884d8"
               dataKey="value"

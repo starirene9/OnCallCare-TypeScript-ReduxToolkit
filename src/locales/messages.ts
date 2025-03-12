@@ -101,7 +101,7 @@ export const messages: Record<string, Record<string, string>> = {
     timestamp: "{time}",
     cardiology: "Cardiología",
     neurology: "Neurología",
-    emergency_room: "Sala de emergencias",
+    emergency_room: "Emergencias",
     internal_medicine: "Medicina interna",
     loading: "Cargando...",
     patientCount: "Cantidad de Pacientes",
