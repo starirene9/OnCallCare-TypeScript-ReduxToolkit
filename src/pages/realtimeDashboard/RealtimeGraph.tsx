@@ -250,10 +250,9 @@ const PatientHistoryGraph: React.FC = () => {
                 strokeWidth={2}
                 dot={false}
                 name={intl.formatMessage({
-                  id: realtimeHistoryData[regionId].regionName.replace(
-                    /\s+/g,
-                    "_"
-                  ),
+                  id: realtimeHistoryData[regionId].regionName
+                    .replace(/\s+/g, "_")
+                    .toLowerCase(),
                 })}
               />
             ))
