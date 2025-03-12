@@ -5,8 +5,10 @@ import { RootState, AppDispatch } from "../../store/store";
 import { ResponsiveContainer, Treemap, Tooltip } from "recharts";
 import { LinearProgress, Typography } from "@mui/material";
 import { CustomTreemapCell } from "../../components/shared/CustomTreemapCell";
+import { useIntl } from "react-intl";
 
 const TreemapChart = () => {
+  const intl = useIntl();
   const { realtimeData, loading, error } = useSelector(
     (state: RootState) => state.realtimeData
   );
@@ -25,7 +27,9 @@ const TreemapChart = () => {
 
   const treemapData = Object.keys(realtimeData)
     .map((key) => ({
-      name: realtimeData[key].regionName,
+      name: intl.formatMessage({
+        id: realtimeData[key].regionName.toLowerCase(),
+      }),
       size: realtimeData[key].regionCount,
     }))
     .sort((a, b) => b.size - a.size);

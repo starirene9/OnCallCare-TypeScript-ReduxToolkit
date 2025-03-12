@@ -7,6 +7,7 @@ import { Typography, LinearProgress } from "@mui/material";
 import { HEATMAP_COLORS } from "../../utils";
 import BasicCard from "../../components/shared/BasicCard";
 import { getTimeAgo } from "../../utils";
+import { useIntl } from "react-intl";
 
 interface PieData {
   name: string;
@@ -15,7 +16,7 @@ interface PieData {
   timeStamp: string;
 }
 
-const renderActiveShape = (props: any) => {
+const renderActiveShape = (props: any, intl: any) => {
   const RADIAN = Math.PI / 180;
   const {
     cx,
@@ -39,7 +40,7 @@ const renderActiveShape = (props: any) => {
   const my = cy + (outerRadius + 30) * sin;
   const ex = mx + (cos >= 0 ? 1 : -1) * 22;
   const ey = my;
-  const textAnchor = cos >= 0 ? "start" : "end";
+  const textAnchor = cos >= 0 ? "center" : "end";
 
   return (
     <g>
@@ -75,14 +76,16 @@ const renderActiveShape = (props: any) => {
         y={ey}
         textAnchor={textAnchor}
         fill="#333"
+        fontSize="0.85rem"
       >
-        {`Patients: ${value}`}
+        {intl.formatMessage({ id: "patients" })}: {value}
       </text>
       <text
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
         dy={18}
         textAnchor={textAnchor}
+        fontSize="0.75rem"
         fill="#999"
       >
         {`(${(percent * 100).toFixed(2)}%)`}
@@ -98,6 +101,7 @@ const PatientDoctorRatio: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [activeIndex, setActiveIndex] = useState<number | 0>(0);
   const [timeAgo, setTimeAgo] = useState("");
+  const intl = useIntl();
 
   useEffect(() => {
     dispatch(fetchRealtimeData());
@@ -105,7 +109,9 @@ const PatientDoctorRatio: React.FC = () => {
 
   const pieData: PieData[] = Object.keys(realtimeData)
     .map((key) => ({
-      name: realtimeData[key].regionName,
+      name: intl.formatMessage({
+        id: realtimeData[key].regionName.toLowerCase().replace(/\s+/g, "_"),
+      }),
       value: realtimeData[key].regionCount, // patients count
       doctorCount: realtimeData[key].regionDrCount, // doctors count
       timeStamp: realtimeData[key].timestamp,
@@ -156,7 +162,7 @@ const PatientDoctorRatio: React.FC = () => {
           <PieChart>
             <Pie
               activeIndex={activeIndex}
-              activeShape={renderActiveShape}
+              activeShape={(props: any) => renderActiveShape(props, intl)}
               data={pieData}
               cx="50%"
               cy="50%"
@@ -176,13 +182,13 @@ const PatientDoctorRatio: React.FC = () => {
             {pieData[activeIndex] &&
               getTimeAgo(pieData[activeIndex].timeStamp) !== "" && (
                 <text
-                  x="90%"
-                  y="99.2%"
-                  textAnchor="middle"
+                  x="2%" // 좌측 정렬
+                  y="99.1%" // 하단 정렬
+                  textAnchor="start"
                   fontSize="11"
                   fill="#666"
                 >
-                  {timeAgo}
+                  {intl.formatMessage({ id: "timestamp" }, { time: timeAgo })}
                 </text>
               )}
           </PieChart>

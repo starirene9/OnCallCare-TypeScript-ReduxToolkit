@@ -40,14 +40,14 @@ const generateMockRealtimeData = (): GroupedRegions => {
       timestamp: new Date().toISOString(),
     },
     R3: {
-      regionName: "Emergency Room",
+      regionName: "Emergency_Room",
       regionCount: Math.floor(Math.random() * 40) + 1, // 1~40 랜덤
       regionDrCount: Math.floor(Math.random() * 15) + 1, // 1~15 랜덤
       polygon: ["37.7890", "127.4321"],
       timestamp: new Date().toISOString(),
     },
     R4: {
-      regionName: "Internal Medicine",
+      regionName: "Internal_Medicine",
       regionCount: Math.floor(Math.random() * 35) + 1, // 1~35 랜덤
       regionDrCount: Math.floor(Math.random() * 8) + 1, // 1~8 랜덤
       polygon: ["37.4567", "127.8765"],

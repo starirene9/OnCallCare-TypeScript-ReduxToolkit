@@ -1,6 +1,7 @@
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import { useIntl } from "react-intl";
 
 interface CardData {
   name: string;
@@ -14,6 +15,8 @@ interface BasicCardProps {
 }
 
 export default function BasicCard({ data, activeIndex }: BasicCardProps) {
+  const intl = useIntl();
+
   return (
     <div
       style={{
@@ -38,7 +41,7 @@ export default function BasicCard({ data, activeIndex }: BasicCardProps) {
             gutterBottom
             sx={{ color: "text.secondary", fontSize: 14 }}
           >
-            Patients Count
+            {intl.formatMessage({ id: "patientCount" })}
           </Typography>
           <Typography variant="h4" sx={{ fontWeight: "bold" }}>
             {data[activeIndex]?.value}
@@ -60,7 +63,7 @@ export default function BasicCard({ data, activeIndex }: BasicCardProps) {
             gutterBottom
             sx={{ color: "text.secondary", fontSize: 14 }}
           >
-            Doctor's Count
+            {intl.formatMessage({ id: "doctorCount" })}
           </Typography>
           <Typography variant="h4" sx={{ fontWeight: "bold" }}>
             {data[activeIndex]?.doctorCount}

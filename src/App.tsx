@@ -7,8 +7,8 @@ import {
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { NavProvider } from "./context/NavContext";
-import { useEffect } from "react";
-import "./App.css";
+import { useEffect, useState } from "react";
+import { messages } from "./locales/messages";
 
 import Header from "./components/ui/Header";
 import Nav from "./components/ui/Nav";
@@ -16,6 +16,8 @@ import Footer from "./components/ui/Footer";
 import Main from "./components/ui/Main";
 import Login from "./pages/login/Login";
 import useLocalStorage from "./hooks/useLocalStorage";
+import "./App.css";
+import { IntlProvider } from "react-intl";
 
 export interface AuthProps {
   isAuthenticatedLS?: boolean;
@@ -27,6 +29,13 @@ function App() {
     "isLoggedIn",
     false
   );
+  const [locale, setLocale] = useState<keyof typeof messages>(
+    (localStorage.getItem("locale") as keyof typeof messages) || "en"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("locale", locale);
+  }, [locale]);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -42,33 +51,41 @@ function App() {
 
   return (
     <Provider store={store}>
-      <NavProvider>
-        <Router>
-          <div className="flex flex-col min-h-screen">
-            {isAuthenticatedLS && (
-              <Header setIsAuthenticatedLS={setIsAuthenticatedLS} />
-            )}
-            <div className="flex flex-1">
-              {isAuthenticatedLS && <Nav />}
-              <Routes>
-                <Route
-                  path="/login"
-                  element={
-                    <Login setIsAuthenticatedLS={setIsAuthenticatedLS} />
-                  }
+      <IntlProvider
+        locale={locale}
+        messages={messages[locale] || messages["en"]}
+      >
+        <NavProvider>
+          <Router>
+            <div className="flex flex-col min-h-screen">
+              {isAuthenticatedLS && (
+                <Header
+                  setIsAuthenticatedLS={setIsAuthenticatedLS}
+                  setLocale={setLocale}
                 />
-                <Route
-                  path="/*"
-                  element={
-                    isAuthenticatedLS ? <Main /> : <Navigate to="/login" />
-                  }
-                />
-              </Routes>
+              )}
+              <div className="flex flex-1">
+                {isAuthenticatedLS && <Nav />}
+                <Routes>
+                  <Route
+                    path="/login"
+                    element={
+                      <Login setIsAuthenticatedLS={setIsAuthenticatedLS} />
+                    }
+                  />
+                  <Route
+                    path="/*"
+                    element={
+                      isAuthenticatedLS ? <Main /> : <Navigate to="/login" />
+                    }
+                  />
+                </Routes>
+              </div>
+              {isAuthenticatedLS && <Footer />}
             </div>
-            {isAuthenticatedLS && <Footer />}
-          </div>
-        </Router>
-      </NavProvider>
+          </Router>
+        </NavProvider>
+      </IntlProvider>
     </Provider>
   );
 }

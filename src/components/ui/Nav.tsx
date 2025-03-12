@@ -10,35 +10,70 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNav } from "../../context/NavContext";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import { useIntl } from "react-intl";
 
 const Nav = () => {
   const { isOpen, setIsOpen } = useNav();
   const location = useLocation(); // 현재 URL 경로 가져오기
   const [storedValue] = useLocalStorage("username", "");
+  const intl = useIntl();
+
   let navItems = [];
 
   storedValue === "admin"
     ? (navItems = [
-        { to: "/", icon: <DashboardIcon />, label: "Dashboard" },
-        { to: "/patients", icon: <PeopleIcon />, label: "Patients" },
-        { to: "/alerts", icon: <NotificationsActiveIcon />, label: "Alerts" },
-        { to: "/doctors", icon: <LocalHospitalIcon />, label: "Doctors" },
+        {
+          to: "/",
+          icon: <DashboardIcon />,
+          label: intl.formatMessage({ id: "dashboard" }),
+        },
+        {
+          to: "/patients",
+          icon: <PeopleIcon />,
+          label: intl.formatMessage({ id: "patients_menu" }),
+        },
+        {
+          to: "/doctors",
+          icon: <LocalHospitalIcon />,
+          label: intl.formatMessage({ id: "doctors" }),
+        },
+        {
+          to: "/alerts",
+          icon: <NotificationsActiveIcon />,
+          label: intl.formatMessage({ id: "alerts" }),
+        },
         {
           to: "/emergency-broadcast",
           icon: <CampaignIcon />,
-          label: "Emergency Broadcast",
+          label: intl.formatMessage({ id: "emergency_broadcast" }),
         },
         {
           to: "/nearby-hospitals",
           icon: <MapIcon />,
-          label: "Nearby Hospitals",
+          label: intl.formatMessage({ id: "nearby_hospitals" }),
         },
       ])
     : (navItems = [
-        { to: "/", icon: <DashboardIcon />, label: "Dashboard" },
-        { to: "/patients", icon: <PeopleIcon />, label: "Patients" },
-        { to: "/alerts", icon: <NotificationsActiveIcon />, label: "Alerts" },
-        { to: "/doctors", icon: <LocalHospitalIcon />, label: "Doctors" },
+        {
+          to: "/",
+          icon: <DashboardIcon />,
+          label: intl.formatMessage({ id: "dashboard" }),
+        },
+        {
+          to: "/patients",
+          icon: <PeopleIcon />,
+          label: intl.formatMessage({ id: "patients_menu" }),
+        },
+        {
+          to: "/doctors",
+          icon: <LocalHospitalIcon />,
+          label: intl.formatMessage({ id: "doctors" }),
+        },
+        {
+          to: "/alerts",
+          icon: <NotificationsActiveIcon />,
+          label: intl.formatMessage({ id: "alerts" }),
+        },
       ]);
 
   return (

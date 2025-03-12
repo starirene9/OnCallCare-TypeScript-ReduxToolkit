@@ -15,8 +15,10 @@ import { fetchRealtimeHistoryData } from "../../features/realtimeDashboard/realt
 import { Typography, LinearProgress } from "@mui/material";
 import { HEATMAP_COLORS } from "../../utils";
 import FormControlLabelPosition from "../../components/shared/Switch";
+import { useIntl } from "react-intl";
 
 const PatientHistoryGraph: React.FC = () => {
+  const intl = useIntl();
   const { realtimeHistoryData, loading, error } = useSelector(
     (state: RootState) => state.realtimeHistoryData
   );
@@ -143,7 +145,8 @@ const PatientHistoryGraph: React.FC = () => {
                 }}
               />
               <span style={{ color: "black" }}>
-                Total Patients: {payload[0]?.value}
+                {intl.formatMessage({ id: "total_patients" })}:{" "}
+                {payload[0]?.value}
               </span>
             </div>
           </div>
@@ -172,7 +175,12 @@ const PatientHistoryGraph: React.FC = () => {
                   />
                 )}
                 <span style={{ color: "black" }}>
-                  {entry.name}: {entry.value}
+                  {intl.formatMessage({
+                    id: entry.name
+                      ? entry.name.replace(/\s+/g, "_").toLowerCase()
+                      : "unknown",
+                  })}
+                  : {entry.value}
                 </span>
               </div>
             ))
@@ -198,7 +206,7 @@ const PatientHistoryGraph: React.FC = () => {
         }}
       >
         <FormControlLabelPosition
-          name="Total Patients"
+          name={intl.formatMessage({ id: "total_patients" })}
           checked={checked}
           handleChange={handleChange}
           labelStyle={{ fontSize: "0.8rem", color: "var(--color-gray)" }}
@@ -230,7 +238,7 @@ const PatientHistoryGraph: React.FC = () => {
               stroke="var(--color-dark-blue)"
               strokeWidth={2}
               dot={false}
-              name="Total Patients"
+              name={intl.formatMessage({ id: "total_patients" })}
             />
           ) : (
             Object.keys(realtimeHistoryData).map((regionId, index) => (
@@ -241,7 +249,12 @@ const PatientHistoryGraph: React.FC = () => {
                 stroke={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
                 strokeWidth={2}
                 dot={false}
-                name={realtimeHistoryData[regionId].regionName}
+                name={intl.formatMessage({
+                  id: realtimeHistoryData[regionId].regionName.replace(
+                    /\s+/g,
+                    "_"
+                  ),
+                })}
               />
             ))
           )}

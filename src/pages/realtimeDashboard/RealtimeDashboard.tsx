@@ -3,8 +3,11 @@ import RealtimeCount from "./RealtimeCount";
 import RealtimeGraph from "./RealtimeGraph";
 import RealtimeMap from "./RealtimeMap";
 import { Typography } from "@mui/material";
+import { useIntl } from "react-intl";
 
 const RealtimeDashboard = () => {
+  const intl = useIntl();
+
   return (
     <Grid container sx={{ height: "100%" }}>
       <Grid item xs={12} md={6} sx={{ pr: 2 }}>
@@ -33,7 +36,7 @@ const RealtimeDashboard = () => {
               variant="subtitle1"
               sx={{ mb: 2, color: "var(--color-navy)" }}
             >
-              Real-time Patients-to-Doctors Ratio
+              {intl.formatMessage({ id: "realtime_ratio" })}
             </Typography>
             <RealtimeCount />
           </Paper>
@@ -51,7 +54,7 @@ const RealtimeDashboard = () => {
               variant="subtitle1"
               sx={{ mb: 1, color: "var(--color-navy)" }}
             >
-              Patient Visit History
+              {intl.formatMessage({ id: "patient_history" })}
             </Typography>
             <RealtimeGraph />
           </Paper>

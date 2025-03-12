@@ -20,3 +20,7 @@ export const getTimeAgo = (timestamp: string): string => {
   if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
   return `${Math.floor(diff / 3600)} hours ago`;
 };
+
+export const languageButtons = ["🇰🇷 한국어", "🇺🇸 Eng", "🇪🇸 Esp"];
+
+export const languageCodes = ["ko", "en", "es"];

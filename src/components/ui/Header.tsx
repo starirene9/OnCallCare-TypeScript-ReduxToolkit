@@ -12,14 +12,20 @@ import DigitalClock from "../shared/DigitalClock";
 import OnCallCareLogo from "../../assets/OnCallCare.png";
 import Weather from "../shared/Weather";
 import VariantButtonGroup from "../shared/ButtonGroup";
+import { languageButtons, languageCodes } from "../../../src/utils";
+import { useIntl } from "react-intl";
 
-const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
+interface HeaderProps extends AuthProps {
+  setLocale: (lang: string) => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ setIsAuthenticatedLS, setLocale }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [storedUserName] = useLocalStorage("username", "Guest");
   const [language, setLanguage] = useState("en");
-  const languageButtons = ["🇰🇷 한국어", "🇺🇸 Eng", "🇪🇸 Esp"];
-  const languageCodes = ["ko", "en", "es"];
+  const intl = useIntl();
+
   const buttonStyles = languageCodes.map((code) => ({
     backgroundColor:
       language === code ? "var(--color-azure)" : "var(--color-light-silver)",
@@ -46,7 +52,8 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
 
   const handleLanguageChange = (lang: string) => {
     setLanguage(lang);
-    // setLocale(lang);
+    setLocale(lang);
+    localStorage.setItem("locale", lang);
   };
 
   const onClickHandlers = languageCodes.map(
@@ -74,7 +81,10 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
         />
         <IconButton onClick={handleOpenMenu} onMouseEnter={handleOpenMenu}>
           <Avatar
-            alt="User Profile"
+            alt={intl.formatMessage(
+              { id: "welcome" },
+              { name: storedUserName }
+            )}
             src={storedUserName === "admin" ? adminImage : userImage}
             sx={{
               width: 60,
@@ -93,9 +103,11 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
             onClick={(e) => e.preventDefault()}
             sx={{ pointerEvents: "none" }}
           >
-            Hello, {storedUserName} 👋
+            {intl.formatMessage({ id: "welcome" }, { name: storedUserName })}
           </MenuItem>
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          <MenuItem onClick={handleLogout}>
+            {intl.formatMessage({ id: "logout" })}
+          </MenuItem>
         </Menu>
       </div>
     </header>

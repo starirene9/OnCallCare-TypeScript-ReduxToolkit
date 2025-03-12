@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from "react";
-import moment from "moment-timezone";
+import { useIntl } from "react-intl";
 
 const DigitalClock: React.FC = () => {
-  const [time, setTime] = useState<string>(
-    moment().tz("Asia/Seoul").format("HH:mm:ss")
-  );
-  const [date, setDate] = useState<string>(
-    moment().tz("Asia/Seoul").format("ddd, MMMM Do, YYYY")
-  );
+  const intl = useIntl();
+  const [time, setTime] = useState<Date>(new Date());
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(moment().tz("Asia/Seoul").format("HH:mm:ss"));
-      setDate(moment().tz("Asia/Seoul").format("ddd, MMMM Do, YYYY"));
+      setTime(new Date());
     }, 1000);
 
     return () => clearInterval(interval);
@@ -20,8 +15,22 @@ const DigitalClock: React.FC = () => {
 
   return (
     <div className="text-[0.95rem] font-bold">
-      <div>{date}</div>
-      <div>{time}</div>
+      <div>
+        {intl.formatDate(time, {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+      </div>
+      <div>
+        {intl.formatTime(time, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        })}
+      </div>
     </div>
   );
 };
