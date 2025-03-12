@@ -33,6 +33,19 @@ function App() {
     (localStorage.getItem("locale") as keyof typeof messages) || "en"
   );
 
+  // beforeunload : 사용자가 페이지를 닫거나 새로고침할 때 발생하는 브라우저 이벤트
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("locale");
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("locale", locale);
   }, [locale]);

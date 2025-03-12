@@ -47,6 +47,7 @@ const Header: React.FC<HeaderProps> = ({ setIsAuthenticatedLS, setLocale }) => {
     setIsAuthenticatedLS(false);
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("username");
+    localStorage.removeItem("locale");
     navigate("/login");
   };
 
