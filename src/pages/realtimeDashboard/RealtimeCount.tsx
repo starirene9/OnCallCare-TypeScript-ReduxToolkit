@@ -29,7 +29,6 @@ const renderActiveShape = (props: any, intl: any) => {
     fill,
     payload,
     percent,
-    value,
   } = props;
 
   const sin = Math.sin(-RADIAN * midAngle);
@@ -40,7 +39,24 @@ const renderActiveShape = (props: any, intl: any) => {
   const my = cy + (outerRadius + 30) * sin;
   const ex = mx + (cos >= 0 ? 1 : -1) * 22;
   const ey = my;
-  const textAnchor = cos >= 0 ? "center" : "end";
+  const textAnchor = cos >= 0 ? "start" : "end";
+  const textOffset = cos >= 0 ? 5 : -5;
+
+  let patientsPerDoctorValue = 0;
+  if (payload.doctorCount > 0) {
+    const ratio = payload.value / payload.doctorCount;
+
+    patientsPerDoctorValue =
+      ratio % 1 === 0 ? Math.floor(ratio) : Number(ratio.toFixed(1));
+  }
+
+  const formattedPatientsPerDoctor =
+    payload.doctorCount > 0
+      ? intl.formatMessage(
+          { id: "patients_per_doctor_ratio" },
+          { ratio: patientsPerDoctorValue }
+        )
+      : intl.formatMessage({ id: "no_doctors" });
 
   return (
     <g>
@@ -71,24 +87,35 @@ const renderActiveShape = (props: any, intl: any) => {
         fill="none"
       />
       <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
+      <rect
+        x={ex + textOffset - (textAnchor === "end" ? 150 : 0)}
+        y={ey - 10}
+        width={130}
+        height={35}
+        fill="white"
+        rx={4}
+      />
       <text
-        x={ex + (cos >= 0 ? 1 : -1) * 12}
+        x={ex + textOffset}
         y={ey}
         textAnchor={textAnchor}
         fill="#333"
         fontSize="0.85rem"
       >
-        {intl.formatMessage({ id: "patients" })}: {value}
+        {intl.formatMessage({ id: "patients_per_doctor" })}:
+        {formattedPatientsPerDoctor}
       </text>
       <text
-        x={ex + (cos >= 0 ? 1 : -1) * 12}
+        x={ex + textOffset}
         y={ey}
         dy={18}
         textAnchor={textAnchor}
         fontSize="0.75rem"
         fill="#999"
       >
-        {`(${(percent * 100).toFixed(2)}%)`}
+        {`${intl.formatMessage({ id: "patient_percentage" })}: ${(
+          percent * 100
+        ).toFixed(2)}%`}
       </text>
     </g>
   );
@@ -112,8 +139,8 @@ const PatientDoctorRatio: React.FC = () => {
       name: intl.formatMessage({
         id: realtimeData[key].regionName.toLowerCase().replace(/\s+/g, "_"),
       }),
-      value: realtimeData[key].regionCount, // patients count
-      doctorCount: realtimeData[key].regionDrCount, // doctors count
+      value: realtimeData[key].regionCount,
+      doctorCount: realtimeData[key].regionDrCount,
       timeStamp: realtimeData[key].timestamp,
     }))
     .sort((a, b) => b.value - a.value);
@@ -148,7 +175,7 @@ const PatientDoctorRatio: React.FC = () => {
     >
       <div
         style={{
-          flexBasis: "70%",
+          flexBasis: "75%",
           flexGrow: 1,
           height: "100%",
         }}
@@ -182,8 +209,8 @@ const PatientDoctorRatio: React.FC = () => {
             {pieData[activeIndex] &&
               getTimeAgo(pieData[activeIndex].timeStamp) !== "" && (
                 <text
-                  x="2%" // 좌측 정렬
-                  y="99.1%" // 하단 정렬
+                  x="2%"
+                  y="99.1%"
                   textAnchor="start"
                   fontSize="11"
                   fill="#666"
@@ -194,7 +221,7 @@ const PatientDoctorRatio: React.FC = () => {
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div style={{ flexBasis: "30%", flexGrow: 1 }}>
+      <div style={{ flexBasis: "25%", flexGrow: 1 }}>
         <BasicCard data={pieData} activeIndex={activeIndex} />
       </div>
     </div>

@@ -16,6 +16,10 @@ export const messages: Record<string, Record<string, string>> = {
     loading: "Loading...",
     patientCount: "Patient Count",
     doctorCount: "Doctor Count",
+    patients_per_doctor: "P/D Ratio",
+    patients_per_doctor_ratio: "{ratio}",
+    patient_percentage: "Dept. Ratio",
+    no_doctors: "No doctors",
 
     // Navigation
     dashboard: "Dashboard",
@@ -57,6 +61,10 @@ export const messages: Record<string, Record<string, string>> = {
     loading: "로딩 중...",
     patientCount: "환자 수",
     doctorCount: "의사 수",
+    patients_per_doctor: "의사당 환자",
+    patients_per_doctor_ratio: "{ratio}명",
+    patient_percentage: "병동 비율",
+    no_doctors: "의사 없음",
 
     // Navigation
     dashboard: "대시보드",
@@ -98,6 +106,10 @@ export const messages: Record<string, Record<string, string>> = {
     loading: "Cargando...",
     patientCount: "Cantidad de Pacientes",
     doctorCount: "Cantidad de Doctores",
+    patients_per_doctor: "Pac./Médico",
+    patients_per_doctor_ratio: "{ratio}",
+    patient_percentage: "Proporción dept.",
+    no_doctors: "Sin médicos",
 
     // Navigation
     dashboard: "Tablero",
