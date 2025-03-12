@@ -177,9 +177,9 @@ const PatientDoctorRatio: React.FC = () => {
               getTimeAgo(pieData[activeIndex].timeStamp) !== "" && (
                 <text
                   x="90%"
-                  y="99%"
+                  y="99.2%"
                   textAnchor="middle"
-                  fontSize="12"
+                  fontSize="11"
                   fill="#666"
                 >
                   {timeAgo}
