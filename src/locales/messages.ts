@@ -98,7 +98,7 @@ export const messages: Record<string, Record<string, string>> = {
     patient_history: "Historial de visitas de pacientes",
     patients: "Pacientes",
     total_patients: "Pacientes totales",
-    timestamp: "Última actualización: {time}",
+    timestamp: "{time}",
     cardiology: "Cardiología",
     neurology: "Neurología",
     emergency_room: "Sala de emergencias",

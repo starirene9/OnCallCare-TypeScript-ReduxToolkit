@@ -2,19 +2,25 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { useIntl } from "react-intl";
-
+import { getTimeAgo } from "../../utils";
 interface CardData {
   name: string;
   value: number;
   doctorCount: number;
+  timeStamp: string;
 }
 
 interface BasicCardProps {
   data: CardData[];
   activeIndex: number;
+  timeAgo: string;
 }
 
-export default function BasicCard({ data, activeIndex }: BasicCardProps) {
+export default function BasicCard({
+  data,
+  activeIndex,
+  timeAgo,
+}: BasicCardProps) {
   const intl = useIntl();
 
   return (
@@ -70,6 +76,19 @@ export default function BasicCard({ data, activeIndex }: BasicCardProps) {
           </Typography>
         </CardContent>
       </Card>
+      {data[activeIndex] && getTimeAgo(data[activeIndex]?.timeStamp) !== "" && (
+        <Typography
+          variant="caption"
+          sx={{
+            textAlign: "center",
+            fontSize: "11px",
+            color: "#666",
+            marginTop: "-3px",
+          }}
+        >
+          {intl.formatMessage({ id: "timestamp" }, { time: timeAgo })}
+        </Typography>
+      )}
     </div>
   );
 }

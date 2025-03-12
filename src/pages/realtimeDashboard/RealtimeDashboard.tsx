@@ -41,7 +41,7 @@ const RealtimeDashboard = () => {
           >
             <Typography
               variant="subtitle1"
-              sx={{ mb: 2, color: "var(--color-navy)" }}
+              sx={{ mb: 1, color: "var(--color-navy)" }}
             >
               {intl.formatMessage({ id: "realtime_ratio" })}
             </Typography>

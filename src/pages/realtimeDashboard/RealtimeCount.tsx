@@ -34,14 +34,20 @@ const renderActiveShape = (props: any, intl: any) => {
 
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);
-  const sx = cx + (outerRadius + 10) * cos;
-  const sy = cy + (outerRadius + 10) * sin;
-  const mx = cx + (outerRadius + 30) * cos;
-  const my = cy + (outerRadius + 30) * sin;
-  const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+  const mx = cx + (outerRadius + 15) * cos;
+  const my = cy + (outerRadius + 15) * sin;
+  const ex = mx + (cos >= 0 ? 1 : -1) * 15;
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
   const textOffset = cos >= 0 ? 5 : -5;
+  // Calculate text position based on angle to avoid overlapping with chart
+  const textPositionX = ex + textOffset;
+
+  // Add extra padding for top and bottom angles
+  const isTopHalf = sin < 0;
+  const isBottomHalf = sin > 0;
+  const verticalOffset = isTopHalf ? -10 : isBottomHalf ? 10 : 0;
+  const textPositionY = ey + verticalOffset;
 
   let patientsPerDoctorValue = 0;
   if (payload.doctorCount > 0) {
@@ -61,7 +67,15 @@ const renderActiveShape = (props: any, intl: any) => {
 
   return (
     <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fontSize={12} fill="#333">
+      <text
+        x={cx}
+        y={cy}
+        dy={8}
+        textAnchor="middle"
+        fontSize={13}
+        fontWeight="bold"
+        fill="#333"
+      >
         {payload.name}
       </text>
       <Sector
@@ -82,36 +96,22 @@ const renderActiveShape = (props: any, intl: any) => {
         outerRadius={outerRadius + 10}
         fill={fill}
       />
-      <path
-        d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`}
-        stroke={fill}
-        fill="none"
-      />
-      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-      <rect
-        x={ex + textOffset - (textAnchor === "end" ? 150 : 0)}
-        y={ey - 10}
-        width={130}
-        height={35}
-        fill="white"
-        rx={4}
-      />
       <text
-        x={ex + textOffset}
-        y={ey}
+        x={textPositionX}
+        y={textPositionY}
         textAnchor={textAnchor}
         fill="#333"
-        fontSize="0.85rem"
+        fontSize="0.9rem"
       >
         {intl.formatMessage({ id: "patients_per_doctor" })}:
         {formattedPatientsPerDoctor}
       </text>
       <text
-        x={ex + textOffset}
-        y={ey}
+        x={textPositionX}
+        y={textPositionY}
         dy={18}
         textAnchor={textAnchor}
-        fontSize="0.75rem"
+        fontSize="0.8rem"
         fill="#999"
       >
         {`${intl.formatMessage({ id: "patient_percentage" })}: ${(
@@ -128,7 +128,7 @@ const PatientDoctorRatio: React.FC = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const [activeIndex, setActiveIndex] = useState<number | 0>(0);
-  const [timeAgo, setTimeAgo] = useState("");
+  const [timeAgo, setTimeAgo] = useState<string>("");
   const intl = useIntl();
 
   useEffect(() => {
@@ -146,8 +146,6 @@ const PatientDoctorRatio: React.FC = () => {
       timeStamp: realtimeData[key].timestamp,
     }))
     .sort((a, b) => b.value - a.value);
-
-  console.log("pieData", pieData);
 
   useEffect(() => {
     const updateAgo = () => {
@@ -197,8 +195,8 @@ const PatientDoctorRatio: React.FC = () => {
               data={pieData}
               cx="50%"
               cy="50%"
-              innerRadius={50}
-              outerRadius={70}
+              innerRadius={60}
+              outerRadius={80}
               fill="#8884d8"
               dataKey="value"
               onMouseEnter={(_, index) => setActiveIndex(index)}
@@ -210,23 +208,11 @@ const PatientDoctorRatio: React.FC = () => {
                 />
               ))}
             </Pie>
-            {pieData[activeIndex] &&
-              getTimeAgo(pieData[activeIndex].timeStamp) !== "" && (
-                <text
-                  x="2%"
-                  y="99.1%"
-                  textAnchor="start"
-                  fontSize="11"
-                  fill="#666"
-                >
-                  {intl.formatMessage({ id: "timestamp" }, { time: timeAgo })}
-                </text>
-              )}
           </PieChart>
         </ResponsiveContainer>
       </div>
       <div style={{ flexBasis: "25%", flexGrow: 1 }}>
-        <BasicCard data={pieData} activeIndex={activeIndex} />
+        <BasicCard data={pieData} activeIndex={activeIndex} timeAgo={timeAgo} />
       </div>
     </div>
   );
