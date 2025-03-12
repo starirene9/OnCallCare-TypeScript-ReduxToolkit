@@ -1,4 +1,4 @@
-import { Grid, Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import RealtimeCount from "./RealtimeCount";
 import RealtimeGraph from "./RealtimeGraph";
 import RealtimeMap from "./RealtimeMap";
@@ -9,21 +9,28 @@ const RealtimeDashboard = () => {
   const intl = useIntl();
 
   return (
-    <Grid container sx={{ height: "100%" }}>
-      <Grid item xs={12} md={6} sx={{ pr: 2 }}>
+    <Box sx={{ display: "flex", flexWrap: "wrap", height: "100%" }}>
+      <Box
+        sx={{
+          width: { xs: "100%", md: "50%" },
+          pr: { md: 2 },
+          mb: { xs: 2, md: 0 },
+        }}
+      >
         <Paper sx={{ height: "100%", p: 2 }}>
           <RealtimeMap />
         </Paper>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        md={6}
-        container
-        direction="column"
-        sx={{ height: "100%" }}
+      </Box>
+
+      <Box
+        sx={{
+          width: { xs: "100%", md: "50%" },
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
       >
-        <Grid item xs={6} sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2, height: "50%" }}>
           <Paper
             sx={{
               height: "100%",
@@ -40,8 +47,9 @@ const RealtimeDashboard = () => {
             </Typography>
             <RealtimeCount />
           </Paper>
-        </Grid>
-        <Grid item sx={{ height: "calc(100% * 6 / 12 - 17px)" }}>
+        </Box>
+
+        <Box sx={{ height: "50%" }}>
           <Paper
             sx={{
               height: "100%",
@@ -58,9 +66,9 @@ const RealtimeDashboard = () => {
             </Typography>
             <RealtimeGraph />
           </Paper>
-        </Grid>
-      </Grid>
-    </Grid>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
