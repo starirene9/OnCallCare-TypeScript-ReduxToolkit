@@ -4,12 +4,13 @@ import { fetchRealtimeData } from "../../features/realtimeDashboard/realtime-sli
 import { RootState, AppDispatch } from "../../store/store";
 import { ResponsiveContainer, PieChart, Pie, Sector, Cell } from "recharts";
 import { Typography, LinearProgress } from "@mui/material";
-import { HEATMAP_COLORS } from "../../utils";
+import { getRegionColor } from "../../utils";
 import BasicCard from "../../components/shared/BasicCard";
 import { getTimeAgo } from "../../utils";
 import { useIntl } from "react-intl";
 
 interface PieData {
+  regionId: number;
   name: string;
   value: number;
   doctorCount: number;
@@ -136,6 +137,7 @@ const PatientDoctorRatio: React.FC = () => {
 
   const pieData: PieData[] = Object.keys(realtimeData)
     .map((key) => ({
+      regionId: realtimeData[key].regionId,
       name: intl.formatMessage({
         id: realtimeData[key].regionName.toLowerCase().replace(/\s+/g, "_"),
       }),
@@ -144,6 +146,8 @@ const PatientDoctorRatio: React.FC = () => {
       timeStamp: realtimeData[key].timestamp,
     }))
     .sort((a, b) => b.value - a.value);
+
+  console.log("pieData", pieData);
 
   useEffect(() => {
     const updateAgo = () => {
@@ -202,7 +206,7 @@ const PatientDoctorRatio: React.FC = () => {
               {pieData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
+                  fill={getRegionColor(entry?.regionId)}
                 />
               ))}
             </Pie>

@@ -11,6 +11,11 @@ export const HEATMAP_COLORS = [
   "#FFD700", // 10. 황금색 (노랑 계열)
 ];
 
+export const getRegionColor = (regionId: number): string => {
+  const colorIndex = (regionId - 1) % HEATMAP_COLORS.length;
+  return HEATMAP_COLORS[colorIndex];
+};
+
 export const getTimeAgo = (timestamp: string): string => {
   const now = new Date();
   const time = new Date(timestamp);

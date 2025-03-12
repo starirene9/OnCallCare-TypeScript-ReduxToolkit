@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import { fetchRealtimeHistoryData } from "../../features/realtimeDashboard/realtime-history-slice";
 import { Typography, LinearProgress } from "@mui/material";
-import { HEATMAP_COLORS } from "../../utils";
+import { getRegionColor } from "../../utils";
 import FormControlLabelPosition from "../../components/shared/Switch";
 import { useIntl } from "react-intl";
 
@@ -77,7 +77,7 @@ const PatientHistoryGraph: React.FC = () => {
               (countArray && countArray[index] !== null ? countArray[index] : 0)
             );
           }, 0);
-          dataPoint["Total Patients"] = totalPatients; // ✅ 총합 데이터 추가
+          dataPoint["Total Patients"] = totalPatients;
         } else {
           regionIds.forEach((regionId) => {
             const countArray = realtimeHistoryData[regionId]?.regionCount;
@@ -91,7 +91,7 @@ const PatientHistoryGraph: React.FC = () => {
 
       setChartData(transformedData);
     }
-  }, [realtimeHistoryData, checked]); // ✅ checked 값이 변경될 때마다 업데이트
+  }, [realtimeHistoryData, checked]);
 
   interface CustomTooltipProps extends TooltipProps<number, string> {
     checked: boolean;
@@ -102,8 +102,8 @@ const PatientHistoryGraph: React.FC = () => {
     payload,
     checked,
   }) => {
+    console.log(payload);
     if (!active || !payload || payload.length === 0) return null;
-
     return (
       <div
         style={{
@@ -125,7 +125,6 @@ const PatientHistoryGraph: React.FC = () => {
             borderTop: "1px solid #ccc",
           }}
         />
-
         {checked ? (
           <div>
             <div
@@ -140,7 +139,7 @@ const PatientHistoryGraph: React.FC = () => {
                   width: "10px",
                   height: "10px",
                   borderRadius: "50%",
-                  backgroundColor: "var(--color-dark-blue)",
+                  backgroundColor: "var(--color-gray)",
                   marginRight: "8px",
                 }}
               />
@@ -154,36 +153,42 @@ const PatientHistoryGraph: React.FC = () => {
           payload
             .slice()
             .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
-            .map((entry, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "4px",
-                }}
-              >
-                {entry.color && (
+            .map((entry, index) => {
+              const regionKey = Object.keys(entry.payload).find(
+                (key) =>
+                  key.startsWith("R") && entry.payload[key] === entry.value
+              );
+              return (
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "4px",
+                  }}
+                >
                   <div
                     style={{
                       width: "10px",
                       height: "10px",
                       borderRadius: "50%",
-                      backgroundColor: entry.color,
+                      // backgroundColor: regionKey
+                      //   ? getRegionColor(Number(regionKey.replace("R", "")))
+                      //   : "transparent",
                       marginRight: "8px",
                     }}
                   />
-                )}
-                <span style={{ color: "black" }}>
-                  {intl.formatMessage({
-                    id: entry.name
-                      ? entry.name.replace(/\s+/g, "_").toLowerCase()
-                      : "unknown",
-                  })}
-                  : {entry.value}
-                </span>
-              </div>
-            ))
+                  <span style={{ color: "black" }}>
+                    {intl.formatMessage({
+                      id: entry.name
+                        ? entry.name.replace(/\s+/g, "_").toLowerCase()
+                        : "unknown",
+                    })}
+                    : {entry.value}
+                  </span>
+                </div>
+              );
+            })
         )}
       </div>
     );
@@ -235,18 +240,18 @@ const PatientHistoryGraph: React.FC = () => {
             <Line
               type="monotone"
               dataKey="Total Patients"
-              stroke="var(--color-dark-blue)"
+              stroke="var(--color-gray)"
               strokeWidth={2}
               dot={false}
               name={intl.formatMessage({ id: "total_patients" })}
             />
           ) : (
-            Object.keys(realtimeHistoryData).map((regionId, index) => (
+            Object.keys(realtimeHistoryData).map((regionId) => (
               <Line
                 key={regionId}
                 type="monotone"
                 dataKey={regionId}
-                stroke={HEATMAP_COLORS[index % HEATMAP_COLORS.length]}
+                stroke={getRegionColor(Number(regionId.replace("R", "")))}
                 strokeWidth={2}
                 dot={false}
                 name={intl.formatMessage({

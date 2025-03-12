@@ -17,7 +17,7 @@ export const messages: Record<string, Record<string, string>> = {
     patientCount: "Patient Count",
     doctorCount: "Doctor Count",
     patients_per_doctor: "P/D Ratio",
-    patients_per_doctor_ratio: "{ratio}",
+    patients_per_doctor_ratio: " {ratio}",
     patient_percentage: "Dept. Ratio",
     no_doctors: "No doctors",
 
@@ -62,7 +62,7 @@ export const messages: Record<string, Record<string, string>> = {
     patientCount: "환자 수",
     doctorCount: "의사 수",
     patients_per_doctor: "의사당 환자",
-    patients_per_doctor_ratio: "{ratio}명",
+    patients_per_doctor_ratio: " {ratio}명",
     patient_percentage: "병동 비율",
     no_doctors: "의사 없음",
 
@@ -107,7 +107,7 @@ export const messages: Record<string, Record<string, string>> = {
     patientCount: "Cantidad de Pacientes",
     doctorCount: "Cantidad de Doctores",
     patients_per_doctor: "Pac./Médico",
-    patients_per_doctor_ratio: "{ratio}",
+    patients_per_doctor_ratio: " {ratio}",
     patient_percentage: "Proporción dept.",
     no_doctors: "Sin médicos",
 

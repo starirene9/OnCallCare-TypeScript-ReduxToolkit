@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export interface GroupedRegions {
   [regionId: string]: {
+    regionId: number;
     regionName: string;
     regionCount: number[];
     polygon: string[];
@@ -42,6 +43,7 @@ const generateMockRealtimeHistoryData = () => {
 
   return {
     R1: {
+      regionId: 1,
       regionName: "Cardiology",
       regionCount: generateCounts(),
       polygon: ["37.1234", "127.5678"],
@@ -49,6 +51,7 @@ const generateMockRealtimeHistoryData = () => {
       time_interval: 1,
     },
     R2: {
+      regionId: 2,
       regionName: "Neurology",
       regionCount: generateCounts(),
       polygon: ["36.9876", "126.5432"],
@@ -56,6 +59,7 @@ const generateMockRealtimeHistoryData = () => {
       time_interval: 1,
     },
     R3: {
+      regionId: 3,
       regionName: "Emergency_Room",
       regionCount: generateCounts(),
       polygon: ["37.7890", "127.4321"],
@@ -63,6 +67,7 @@ const generateMockRealtimeHistoryData = () => {
       time_interval: 1,
     },
     R4: {
+      regionId: 4,
       regionName: "Internal_Medicine",
       regionCount: generateCounts(),
       polygon: ["37.4567", "127.8765"],

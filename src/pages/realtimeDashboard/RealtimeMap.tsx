@@ -27,6 +27,7 @@ const TreemapChart = () => {
 
   const treemapData = Object.keys(realtimeData)
     .map((key) => ({
+      regionId: realtimeData[key].regionId,
       name: intl.formatMessage({
         id: realtimeData[key].regionName.toLowerCase(),
       }),
@@ -34,6 +35,7 @@ const TreemapChart = () => {
     }))
     .sort((a, b) => b.size - a.size);
 
+  console.log("treemapData", treemapData);
   return (
     <ResponsiveContainer
       width="100%"

@@ -27,7 +27,7 @@ export default function BasicCard({ data, activeIndex }: BasicCardProps) {
       }}
     >
       <Card
-        variant="outlined"
+        elevation={3}
         style={{
           minHeight: "120px",
           display: "flex",
@@ -49,7 +49,7 @@ export default function BasicCard({ data, activeIndex }: BasicCardProps) {
         </CardContent>
       </Card>
       <Card
-        variant="outlined"
+        elevation={3}
         style={{
           height: "120px",
           display: "flex",

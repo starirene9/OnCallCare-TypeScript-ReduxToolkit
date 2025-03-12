@@ -1,8 +1,8 @@
-import { HEATMAP_COLORS } from "../../utils";
+import { getRegionColor } from "../../utils";
 
 export const CustomTreemapCell = (props: any) => {
-  const { x, y, width, height, name, size, index } = props;
-  const color = HEATMAP_COLORS[index % HEATMAP_COLORS.length];
+  const { x, y, width, height, regionId, name, size } = props;
+  const color = getRegionColor(regionId);
 
   return (
     <g>

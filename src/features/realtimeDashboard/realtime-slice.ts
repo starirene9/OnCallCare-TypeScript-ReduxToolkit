@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export interface GroupedRegions {
   [regionId: string]: {
+    regionId: number;
     regionName: string;
     regionCount: number;
     regionDrCount: number;
@@ -26,6 +27,7 @@ const initialState: realtimeDataState = {
 const generateMockRealtimeData = (): GroupedRegions => {
   return {
     R1: {
+      regionId: 1,
       regionName: "Cardiology",
       regionCount: Math.floor(Math.random() * 30) + 1, // 1~30 랜덤
       regionDrCount: Math.floor(Math.random() * 10) + 1, // 1~10 랜덤
@@ -33,6 +35,7 @@ const generateMockRealtimeData = (): GroupedRegions => {
       timestamp: new Date().toISOString(),
     },
     R2: {
+      regionId: 2,
       regionName: "Neurology",
       regionCount: Math.floor(Math.random() * 25) + 1, // 1~25 랜덤
       regionDrCount: Math.floor(Math.random() * 5) + 1, // 1~5 랜덤
@@ -40,6 +43,7 @@ const generateMockRealtimeData = (): GroupedRegions => {
       timestamp: new Date().toISOString(),
     },
     R3: {
+      regionId: 3,
       regionName: "Emergency_Room",
       regionCount: Math.floor(Math.random() * 40) + 1, // 1~40 랜덤
       regionDrCount: Math.floor(Math.random() * 15) + 1, // 1~15 랜덤
@@ -47,6 +51,7 @@ const generateMockRealtimeData = (): GroupedRegions => {
       timestamp: new Date().toISOString(),
     },
     R4: {
+      regionId: 4,
       regionName: "Internal_Medicine",
       regionCount: Math.floor(Math.random() * 35) + 1, // 1~35 랜덤
       regionDrCount: Math.floor(Math.random() * 8) + 1, // 1~8 랜덤
