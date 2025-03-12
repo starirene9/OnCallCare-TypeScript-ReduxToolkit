@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { IconButton, Button, ButtonGroup } from "@mui/material";
+import { IconButton } from "@mui/material";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { AuthProps } from "../../App";
 import userImage from "../../assets/user.png";
@@ -11,12 +11,22 @@ import adminImage from "../../assets/admin.png";
 import DigitalClock from "../shared/DigitalClock";
 import OnCallCareLogo from "../../assets/OnCallCare.png";
 import Weather from "../shared/Weather";
+import VariantButtonGroup from "../shared/ButtonGroup";
 
 const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [storedUserName] = useLocalStorage("username", "Guest");
-  const [language, setLanguage] = useState("Eng");
+  const [language, setLanguage] = useState("en");
+  const languageButtons = ["🇰🇷 한국어", "🇺🇸 Eng", "🇪🇸 Esp"];
+  const languageCodes = ["ko", "en", "es"];
+  const buttonStyles = languageCodes.map((code) => ({
+    backgroundColor:
+      language === code ? "var(--color-azure)" : "var(--color-light-silver)",
+    color: language === code ? "var(--color-white)" : "var(--color-black)",
+    "&:hover": { backgroundColor: "var(--color-azure)" },
+  }));
+
   const navigate = useNavigate();
 
   const handleOpenMenu = (event) => {
@@ -34,11 +44,14 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
     navigate("/login");
   };
 
-  const toggleLanguage = () => {
-    setLanguage((prevLang) => (prevLang === "Kor" ? "Eng" : "Kor"));
-    // console.log(`Language switched to: ${language}`);
-    // 다국어 라이브러리 (i18next 등) 적용 가능
+  const handleLanguageChange = (lang: string) => {
+    setLanguage(lang);
+    // setLocale(lang);
   };
+
+  const onClickHandlers = languageCodes.map(
+    (code) => () => handleLanguageChange(code)
+  );
 
   return (
     <header className="bg-blue-800 p-4 text-white fixed w-full top-0 h-20 flex items-center justify-between px-6">
@@ -51,29 +64,14 @@ const Header: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
           <Weather />
         </div>
       </div>
-      <div className="flex items-center gap-6">
-        <ButtonGroup variant="contained" size="small">
-          <Button
-            onClick={() => setLanguage("Kor")}
-            sx={{
-              backgroundColor: language === "Kor" ? "#1976d2" : "#ddd",
-              color: language === "Kor" ? "#fff" : "#000",
-              "&:hover": { backgroundColor: "#1565c0" },
-            }}
-          >
-            Kor
-          </Button>
-          <Button
-            onClick={() => setLanguage("Eng")}
-            sx={{
-              backgroundColor: language === "Eng" ? "#1976d2" : "#ddd",
-              color: language === "Eng" ? "#fff" : "#000",
-              "&:hover": { backgroundColor: "#1565c0" },
-            }}
-          >
-            Eng
-          </Button>
-        </ButtonGroup>
+      <div className="flex items-center gap-8">
+        <VariantButtonGroup
+          buttonStyles={buttonStyles}
+          buttons={languageButtons}
+          onClickHandlers={onClickHandlers}
+          variant="text"
+          size="small"
+        />
         <IconButton onClick={handleOpenMenu} onMouseEnter={handleOpenMenu}>
           <Avatar
             alt="User Profile"
