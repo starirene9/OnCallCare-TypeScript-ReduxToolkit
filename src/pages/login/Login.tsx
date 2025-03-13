@@ -13,7 +13,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { AuthProps } from "../../App";
 
-const Login: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
+const Login: React.FC<AuthProps> = ({ setIsAuthenticatedLS, setLocale }) => {
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -45,7 +45,7 @@ const Login: React.FC<AuthProps> = ({ setIsAuthenticatedLS }) => {
         credentials.password === userAccount.password)
     ) {
       alert("Login Successful!");
-
+      setLocale("en");
       setIsAuthenticatedLS(true);
       setStoredUserName(credentials.username);
       navigate("/");

@@ -22,6 +22,7 @@ import { IntlProvider } from "react-intl";
 export interface AuthProps {
   isAuthenticatedLS?: boolean;
   setIsAuthenticatedLS: (auth: boolean) => void;
+  setLocale: (locale: string) => void;
 }
 
 function App() {
@@ -83,7 +84,10 @@ function App() {
                   <Route
                     path="/login"
                     element={
-                      <Login setIsAuthenticatedLS={setIsAuthenticatedLS} />
+                      <Login
+                        setIsAuthenticatedLS={setIsAuthenticatedLS}
+                        setLocale={setLocale}
+                      />
                     }
                   />
                   <Route
