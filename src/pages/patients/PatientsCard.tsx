@@ -1,7 +1,5 @@
-import React from "react";
-
 const PatientsCard = () => {
-  return <div>PatientsCard</div>;
+  return <div></div>;
 };
 
 export default PatientsCard;
