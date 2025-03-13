@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useIntl } from "react-intl";
 
 type Message = {
   role: "user" | "assistant";
@@ -6,15 +7,20 @@ type Message = {
 };
 
 const Chatbot: React.FC = () => {
+  const intl = useIntl();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [userInput, setUserInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const [chatHistory, setChatHistory] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "안녕하세요! OnCallCare 의사 도우미입니다. 무엇을 도와드릴까요?",
-    },
-  ]);
+  const [chatHistory, setChatHistory] = useState<Message[]>([]);
+
+  useEffect(() => {
+    setChatHistory([
+      {
+        role: "assistant",
+        content: intl.formatMessage({ id: "chatbot_welcome_message" }),
+      },
+    ]);
+  }, [intl]);
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
@@ -75,7 +81,9 @@ const Chatbot: React.FC = () => {
         onClick={toggleChat}
         className="flex items-center bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 transition-all duration-300 mr-6"
       >
-        <span className="text-sm">의사 도우미 챗봇</span>
+        <span className="text-sm">
+          {intl.formatMessage({ id: "chatbot_open_button" })}
+        </span>
       </button>
       <div
         className={`absolute bottom-12 left-0 bg-white rounded-lg shadow-xl w-80 md:w-101 transition-all duration-300 transform origin-bottom-left ${
@@ -85,7 +93,9 @@ const Chatbot: React.FC = () => {
         }`}
       >
         <div className="bg-blue-500 p-3 rounded-t-lg flex justify-between items-center">
-          <h3 className="font-medium text-white">OnCallCare 의사 도우미</h3>
+          <h3 className="font-medium text-white">
+            {intl.formatMessage({ id: "chatbot_title" })}
+          </h3>
           <button
             onClick={toggleChat}
             className="text-white hover:bg-blue-600 rounded-full p-1"
@@ -103,7 +113,7 @@ const Chatbot: React.FC = () => {
             >
               <p className="text-black inline-block bg-gray-100 rounded-lg p-2 max-w-3/4 shadow-sm">
                 <strong className="text-black">
-                  {msg.role === "user" ? "👤 :" : "🤖 챗봇:"}
+                  {msg.role === "user" ? "👤 :" : "🤖 :"}
                 </strong>{" "}
                 <span className="text-black">{msg.content}</span>
               </p>
@@ -113,7 +123,9 @@ const Chatbot: React.FC = () => {
             <div className="mb-2 text-left">
               <div className="text-black inline-block bg-gray-100 rounded-lg p-2">
                 <div className="flex items-center">
-                  <strong className="text-black">🤖 챗봇:</strong>
+                  <strong className="text-black">
+                    {intl.formatMessage({ id: "chatbot_assistant_label" })}
+                  </strong>
                   <div className="ml-2 flex space-x-1">
                     <div
                       className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
@@ -139,7 +151,9 @@ const Chatbot: React.FC = () => {
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="메시지를 입력하세요..."
+            placeholder={intl.formatMessage({
+              id: "chatbot_input_placeholder",
+            })}
             className="flex-1 border border-gray-300 rounded-l-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
             disabled={isLoading}
           />
@@ -150,7 +164,9 @@ const Chatbot: React.FC = () => {
             } text-white rounded-r-lg px-4 transition-colors`}
             disabled={isLoading}
           >
-            {isLoading ? "처리중..." : "전송"}
+            {isLoading
+              ? `${intl.formatMessage({ id: "chatbot_loading" })}`
+              : `${intl.formatMessage({ id: "chatbot_send_button" })}`}
           </button>
         </div>
       </div>

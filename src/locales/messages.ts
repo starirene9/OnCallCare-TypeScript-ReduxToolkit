@@ -44,6 +44,17 @@ export const messages: Record<string, Record<string, string>> = {
     mist: "Mist",
     seoul: "Seoul",
     weather_in: "{city} {temp}°C, {description}",
+
+    // ChatBot
+    chatbot_title: "OnCallCare Medical Assistant",
+    chatbot_open_button: "Medical Assistant Chatbot",
+    chatbot_welcome_message:
+      "Hello! I am the OnCallCare Medical Assistant. How can I assist you?",
+    chatbot_user_label: "👤 :",
+    chatbot_assistant_label: "🤖 Chatbot:",
+    chatbot_loading: "Processing...",
+    chatbot_input_placeholder: "Enter your message...",
+    chatbot_send_button: "Send",
   },
   ko: {
     welcome: "안녕하세요, {name} 👋",
@@ -89,6 +100,17 @@ export const messages: Record<string, Record<string, string>> = {
     mist: "안개",
     seoul: "서울",
     weather_in: "{city} {temp}°C, {description}",
+
+    // ChatBot
+    chatbot_title: "OnCallCare 의사 도우미",
+    chatbot_open_button: "의사 도우미 챗봇",
+    chatbot_welcome_message:
+      "안녕하세요! OnCallCare 의사 도우미입니다. 무엇을 도와드릴까요?",
+    chatbot_user_label: "👤 :",
+    chatbot_assistant_label: "🤖 챗봇:",
+    chatbot_loading: "처리중...",
+    chatbot_input_placeholder: "메시지를 입력하세요...",
+    chatbot_send_button: "전송",
   },
   es: {
     welcome: "Hola, {name} 👋",
@@ -134,5 +156,16 @@ export const messages: Record<string, Record<string, string>> = {
     mist: "Niebla",
     seoul: "Seúl",
     weather_in: "{city} {temp}°C, {description}",
+
+    // Chatbot
+    chatbot_title: "Asistente Médico de OnCallCare",
+    chatbot_open_button: "Chatbot de Asistencia Médica",
+    chatbot_welcome_message:
+      "¡Hola! Soy el Asistente Médico de OnCallCare. ¿En qué puedo ayudarte?",
+    chatbot_user_label: "👤 :",
+    chatbot_assistant_label: "🤖 Chatbot:",
+    chatbot_loading: "Procesando...",
+    chatbot_input_placeholder: "Escribe tu mensaje...",
+    chatbot_send_button: "Enviar",
   },
 };
