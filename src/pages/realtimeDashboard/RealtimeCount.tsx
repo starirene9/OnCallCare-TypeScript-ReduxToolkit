@@ -40,13 +40,11 @@ const renderActiveShape = (props: any, intl: any) => {
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
   const textOffset = cos >= 0 ? 5 : -5;
-  // Calculate text position based on angle to avoid overlapping with chart
-  const textPositionX = ex + textOffset;
 
-  // Add extra padding for top and bottom angles
+  const textPositionX = ex + textOffset;
   const isTopHalf = sin < 0;
   const isBottomHalf = sin > 0;
-  const verticalOffset = isTopHalf ? -10 : isBottomHalf ? 10 : 0;
+  const verticalOffset = isTopHalf ? -15 : isBottomHalf ? 15 : 0;
   const textPositionY = ey + verticalOffset;
 
   let patientsPerDoctorValue = 0;
@@ -72,10 +70,11 @@ const renderActiveShape = (props: any, intl: any) => {
         y={cy}
         dy={8}
         textAnchor="middle"
-        fontSize="1rem"
+        fontSize="0.85rem"
         fontWeight="bold"
         fill="#333"
       >
+        {/* {payload.name} */}
         {payload.name
           .split(" ")
           .map((word: string, index: number, array: string[]) => (

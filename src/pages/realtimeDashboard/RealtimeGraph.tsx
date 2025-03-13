@@ -153,42 +153,39 @@ const PatientHistoryGraph: React.FC = () => {
           payload
             .slice()
             .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
-            .map((entry, index) => {
-              const regionKey = Object.keys(entry.payload).find(
-                (key) =>
-                  key.startsWith("R") && entry.payload[key] === entry.value
-              );
-              return (
+            .map((entry, index) => (
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "4px",
+                }}
+              >
                 <div
-                  key={index}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "4px",
+                    width: "10px",
+                    height: "10px",
+                    borderRadius: "50%",
+                    backgroundColor:
+                      entry.dataKey &&
+                      typeof entry.dataKey === "string" &&
+                      entry.dataKey.startsWith("R")
+                        ? getRegionColor(Number(entry.dataKey.replace("R", "")))
+                        : "transparent",
+                    marginRight: "8px",
                   }}
-                >
-                  <div
-                    style={{
-                      width: "10px",
-                      height: "10px",
-                      borderRadius: "50%",
-                      // backgroundColor: regionKey
-                      //   ? getRegionColor(Number(regionKey.replace("R", "")))
-                      //   : "transparent",
-                      marginRight: "8px",
-                    }}
-                  />
-                  <span style={{ color: "black" }}>
-                    {intl.formatMessage({
-                      id: entry.name
-                        ? entry.name.replace(/\s+/g, "_").toLowerCase()
-                        : "unknown",
-                    })}
-                    : {entry.value}
-                  </span>
-                </div>
-              );
-            })
+                />
+                <span style={{ color: "black" }}>
+                  {intl.formatMessage({
+                    id: entry.name
+                      ? entry.name.replace(/\s+/g, "_").toLowerCase()
+                      : "unknown",
+                  })}
+                  : {entry.value}
+                </span>
+              </div>
+            ))
         )}
       </div>
     );
