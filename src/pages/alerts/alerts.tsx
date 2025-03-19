@@ -1,35 +1,53 @@
 import React, { useState } from "react";
+import { Box, Paper } from "@mui/material";
 import AlertTable from "./AlertTable";
 import AlertForm from "./AlertForm";
-import { Grid, Paper, TextField } from "@mui/material";
+import SearchFilter from "../../components/shared/SearchFilter";
 
-const Alerts = () => {
+const Alerts: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
+
   return (
-    <Grid container spacing={2} sx={{ height: "100%" }}>
-      <Grid item xs={12}>
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="Search by patient or doctor's name"
-            variant="outlined"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            size="small"
-          />
-        </Grid>
-      </Grid>
-      <Grid item xs={12} md={8} sx={{ height: "calc(100% - 30px)" }}>
-        <Paper sx={{ p: 2, height: "calc(100% - 30px)" }}>
-          <AlertTable searchTerm={searchTerm} />
-        </Paper>
-      </Grid>
-      <Grid item xs={12} md={4} sx={{ height: "calc(100% - 30px)" }}>
-        <Paper sx={{ p: 2, height: "calc(100% - 30px)" }}>
-          <AlertForm searchTerm={searchTerm} />
-        </Paper>
-      </Grid>
-    </Grid>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", height: "100%", gap: 2 }}
+    >
+      <SearchFilter
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        label="Search by patient or doctor's name"
+      />
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          height: "calc(100% - 30px)",
+          gap: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: { xs: "100%", md: "66.7%" },
+            height: { xs: "50%", md: "100%" },
+          }}
+        >
+          <Paper sx={{ p: 2, height: "100%" }}>
+            <AlertTable searchTerm={searchTerm} />
+          </Paper>
+        </Box>
+
+        <Box
+          sx={{
+            width: { xs: "100%", md: "33.3%" },
+            height: { xs: "50%", md: "100%" },
+          }}
+        >
+          <Paper sx={{ p: 2, height: "100%" }}>
+            <AlertForm searchTerm={searchTerm} />
+          </Paper>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

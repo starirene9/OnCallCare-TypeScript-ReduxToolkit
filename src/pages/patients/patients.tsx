@@ -1,36 +1,73 @@
 import React, { useState } from "react";
-import { Grid, Paper, TextField } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import PatientsCard from "./PatientsCard";
 import PatientsTable from "./PatientsTable";
+import SearchFilter from "../../components/shared/SearchFilter";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../store/store";
+import { selectPatient } from "../../features/patients/patient-slice";
 
 const Patients: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const dispatch = useDispatch();
+  const { patients, selectedPatientId } = useSelector(
+    (state: RootState) => state.patients
+  );
+
+  // Select first patient if none is selected
+  React.useEffect(() => {
+    if (!selectedPatientId && Object.keys(patients).length > 0) {
+      dispatch(selectPatient(Object.keys(patients)[0]));
+    }
+  }, [dispatch, patients, selectedPatientId]);
 
   return (
-    <Grid container spacing={2} sx={{ height: "100%" }}>
-      <Grid item xs={12}>
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="Search Patients"
-            variant="outlined"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            size="small"
-          />
-        </Grid>
-      </Grid>
-      <Grid item xs={12} md={4} sx={{ height: "calc(100% - 30px)" }}>
-        <Paper sx={{ p: 2, height: "calc(100% - 30px)" }}>
-          <PatientsCard searchTerm={searchTerm} />
-        </Paper>
-      </Grid>
-      <Grid item xs={12} md={8} sx={{ height: "calc(100% - 30px)" }}>
-        <Paper sx={{ p: 2, height: "calc(100% - 30px)" }}>
-          <PatientsTable searchTerm={searchTerm} />
-        </Paper>
-      </Grid>
-    </Grid>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", height: "100%", gap: 2 }}
+    >
+      <SearchFilter
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        label="Search Patients"
+      />
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          height: "calc(100% - 30px)",
+          gap: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: { xs: "100%", md: "33.3%" },
+            height: { xs: "50%", md: "100%" },
+          }}
+        >
+          <Paper sx={{ p: 2, height: "100%" }}>
+            <PatientsCard
+              searchTerm={searchTerm}
+              selectedPatientId={selectedPatientId}
+            />
+          </Paper>
+        </Box>
+
+        <Box
+          sx={{
+            width: { xs: "100%", md: "66.7%" },
+            height: { xs: "50%", md: "100%" },
+          }}
+        >
+          <Paper sx={{ p: 2, height: "100%" }}>
+            <PatientsTable
+              searchTerm={searchTerm}
+              onSelectPatient={(id) => dispatch(selectPatient(id))}
+            />
+          </Paper>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
