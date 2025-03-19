@@ -29,3 +29,20 @@ export const getTimeAgo = (timestamp: string): string => {
 export const languageButtons = ["🇰🇷 한국어", "🇺🇸 Eng", "🇪🇸 Esp"];
 
 export const languageCodes = ["ko", "en", "es"];
+
+export const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "critical":
+      return "error";
+    case "stable":
+      return "success";
+    case "admitted":
+      return "primary";
+    case "recovery":
+      return "warning";
+    case "discharged":
+      return "default";
+    default:
+      return "default";
+  }
+};

@@ -14,7 +14,6 @@ const Patients: React.FC = () => {
     (state: RootState) => state.patients
   );
 
-  // Select first patient if none is selected
   React.useEffect(() => {
     if (!selectedPatientId && Object.keys(patients).length > 0) {
       dispatch(selectPatient(Object.keys(patients)[0]));
@@ -46,10 +45,7 @@ const Patients: React.FC = () => {
           }}
         >
           <Paper sx={{ p: 2, height: "100%" }}>
-            <PatientsCard
-              searchTerm={searchTerm}
-              selectedPatientId={selectedPatientId}
-            />
+            <PatientsCard selectedPatientId={selectedPatientId} />
           </Paper>
         </Box>
 

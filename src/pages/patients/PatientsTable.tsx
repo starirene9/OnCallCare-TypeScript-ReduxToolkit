@@ -21,6 +21,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import { getStatusColor } from "../../utils";
 
 interface PatientsTableProps {
   searchTerm?: string;
@@ -39,7 +40,7 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
   );
 
   // Convert patients object to array for table display
-  const patientsArray = Object.values(patients);
+  const patientsArray = Object.values(patients); //  객체(patients)의 값들만을 배열로 변환하는 JavaScript 내장 함수
 
   // Filter patients based on search term
   const filteredPatients = patientsArray.filter(
@@ -60,23 +61,6 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
     setPage(0);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "critical":
-        return "error";
-      case "stable":
-        return "success";
-      case "admitted":
-        return "primary";
-      case "recovery":
-        return "warning";
-      case "discharged":
-        return "default";
-      default:
-        return "default";
-    }
-  };
-
   if (loading) {
     return <LinearProgress />;
   }
@@ -86,10 +70,9 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
 
   return (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <Typography variant="h6" component="div" gutterBottom>
+      <Typography variant="subtitle1" component="div" gutterBottom>
         Patients List
       </Typography>
-
       <TableContainer component={Paper} sx={{ flexGrow: 1, overflow: "auto" }}>
         <Table stickyHeader aria-label="patients table">
           <TableHead>
@@ -104,84 +87,90 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
           </TableHead>
           <TableBody>
             {filteredPatients
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((patient) => (
-                <TableRow
-                  key={patient.id}
-                  hover
-                  selected={patient.id === selectedPatientId}
-                  onClick={() => onSelectPatient(patient.id)}
-                  sx={{ cursor: "pointer" }}
-                >
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Avatar src={patient.photo} sx={{ mr: 2 }} />
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // 현재 페이지의 데이터만 slice()로 가져옴
+              .map(
+                (
+                  patient // map으로 각 환자를 테이블 배열 행에서 변환
+                ) => (
+                  <TableRow
+                    key={patient.id}
+                    hover
+                    selected={patient.id === selectedPatientId}
+                    onClick={() => onSelectPatient(patient.id)}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Avatar src={patient.photo} sx={{ mr: 2 }} />
+                        <Box>
+                          <Typography variant="body1">
+                            {patient.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {patient.age} years • {patient.gender}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </TableCell>
+                    <TableCell>{patient.admissionReason}</TableCell>
+                    <TableCell>
                       <Box>
-                        <Typography variant="body1">{patient.name}</Typography>
+                        <Typography variant="body2">
+                          {patient.doctor.name}
+                        </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {patient.age} years • {patient.gender}
+                          {patient.doctor.specialty}
                         </Typography>
                       </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>{patient.admissionReason}</TableCell>
-                  <TableCell>
-                    <Box>
-                      <Typography variant="body2">
-                        {patient.doctor.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {patient.doctor.specialty}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>{patient.nextAppointment}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={patient.status}
-                      color={getStatusColor(patient.status) as any}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell align="center">
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <Tooltip title="View Details">
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectPatient(patient.id);
-                          }}
-                        >
-                          <VisibilityIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Edit Patient">
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Add edit functionality here
-                          }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Medical Records">
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Add medical records functionality here
-                          }}
-                        >
-                          <LocalHospitalIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>{patient.nextAppointment}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={patient.status}
+                        color={getStatusColor(patient.status) as any}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <Tooltip title="View Details">
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectPatient(patient.id); // 선택된 환자의 id가 부모 컴포넌트로 전달
+                            }}
+                          >
+                            <VisibilityIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Edit Patient">
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Add edit functionality here
+                            }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Medical Records">
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Add medical records functionality here
+                            }}
+                          >
+                            <LocalHospitalIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
           </TableBody>
         </Table>
       </TableContainer>

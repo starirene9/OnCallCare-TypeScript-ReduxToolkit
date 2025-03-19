@@ -16,16 +16,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import { useEffect } from "react";
 import { fetchPatientsData } from "../../features/patients/patient-slice";
+import { getStatusColor } from "../../utils";
 
 interface PatientCardProps {
-  searchTerm?: string;
   selectedPatientId?: string | null;
 }
 
-const PatientsCard: React.FC<PatientCardProps> = ({
-  searchTerm,
-  selectedPatientId,
-}) => {
+const PatientsCard: React.FC<PatientCardProps> = ({ selectedPatientId }) => {
   const { patients, loading, error } = useSelector(
     (state: RootState) => state.patients
   );
@@ -65,7 +62,7 @@ const PatientsCard: React.FC<PatientCardProps> = ({
   return (
     <Card sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <Box sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-        <Typography variant="h6" component="div" gutterBottom>
+        <Typography variant="subtitle1" component="div" gutterBottom>
           Patient Information
         </Typography>
 
@@ -145,24 +142,6 @@ const PatientsCard: React.FC<PatientCardProps> = ({
       </CardContent>
     </Card>
   );
-};
-
-// Helper function to determine status color
-const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "critical":
-      return "error";
-    case "stable":
-      return "success";
-    case "admitted":
-      return "primary";
-    case "recovery":
-      return "warning";
-    case "discharged":
-      return "default";
-    default:
-      return "default";
-  }
 };
 
 export default PatientsCard;
