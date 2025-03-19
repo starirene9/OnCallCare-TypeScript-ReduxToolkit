@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
 export interface Patient {
   id: string;
@@ -36,7 +36,6 @@ const initialState: PatientsState = {
   selectedPatientId: null,
 };
 
-// Sample data for initial state
 const samplePatients: { [id: string]: Patient } = {
   P001: {
     id: "P001",
@@ -145,28 +144,18 @@ const samplePatients: { [id: string]: Patient } = {
   },
 };
 
+export const fetchPatientsData = createAsyncThunk(
+  "patientsData/fetchpatientsData",
+  async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return samplePatients;
+  }
+);
+
 export const patientsSlice = createSlice({
   name: "patients",
-  initialState: {
-    ...initialState,
-    patients: samplePatients, // Pre-populate with sample data
-  },
+  initialState,
   reducers: {
-    fetchPatientsStart(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    fetchPatientsSuccess(
-      state,
-      action: PayloadAction<{ [id: string]: Patient }>
-    ) {
-      state.patients = action.payload;
-      state.loading = false;
-    },
-    fetchPatientsFailure(state, action: PayloadAction<string>) {
-      state.loading = false;
-      state.error = action.payload;
-    },
     addPatient(state, action: PayloadAction<Patient>) {
       state.patients[action.payload.id] = action.payload;
     },
@@ -220,12 +209,24 @@ export const patientsSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchPatientsData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchPatientsData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.patients = action.payload;
+      })
+      .addCase(fetchPatientsData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch data";
+      });
+  },
 });
 
 export const {
-  fetchPatientsStart,
-  fetchPatientsSuccess,
-  fetchPatientsFailure,
   addPatient,
   updatePatient,
   deletePatient,

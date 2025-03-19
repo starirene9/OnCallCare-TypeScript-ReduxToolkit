@@ -8,11 +8,14 @@ import {
   Divider,
   Chip,
   Stack,
+  LinearProgress,
 } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../../store/store";
+import { useEffect } from "react";
+import { fetchPatientsData } from "../../features/patients/patient-slice";
 
 interface PatientCardProps {
   searchTerm?: string;
@@ -23,26 +26,23 @@ const PatientsCard: React.FC<PatientCardProps> = ({
   searchTerm,
   selectedPatientId,
 }) => {
-  const { patients, loading } = useSelector(
+  const { patients, loading, error } = useSelector(
     (state: RootState) => state.patients
   );
 
-  // Get the selected patient data
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchPatientsData());
+  }, []);
+
   const patient = selectedPatientId ? patients[selectedPatientId] : null;
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <LinearProgress />;
+  }
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
   }
 
   if (!patient) {

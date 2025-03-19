@@ -102,7 +102,7 @@ const PatientHistoryGraph: React.FC = () => {
     payload,
     checked,
   }) => {
-    console.log(payload);
+    // console.log(payload);
     if (!active || !payload || payload.length === 0) return null;
     return (
       <div

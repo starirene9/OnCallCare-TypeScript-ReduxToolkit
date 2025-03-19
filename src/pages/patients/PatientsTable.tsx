@@ -12,6 +12,7 @@ import {
   Avatar,
   Chip,
   Typography,
+  LinearProgress,
   IconButton,
   Tooltip,
 } from "@mui/material";
@@ -33,7 +34,7 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const { patients, loading, selectedPatientId } = useSelector(
+  const { patients, loading, selectedPatientId, error } = useSelector(
     (state: RootState) => state.patients
   );
 
@@ -77,18 +78,10 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <LinearProgress />;
+  }
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
   }
 
   return (

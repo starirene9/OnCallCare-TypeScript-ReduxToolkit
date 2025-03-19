@@ -35,7 +35,6 @@ const TreemapChart = () => {
     }))
     .sort((a, b) => b.size - a.size);
 
-  console.log("treemapData", treemapData);
   return (
     <ResponsiveContainer
       width="100%"
