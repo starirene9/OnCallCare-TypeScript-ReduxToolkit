@@ -6,6 +6,12 @@ import SearchFilter from "../../components/shared/SearchFilter";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/store";
 import { selectPatient } from "../../features/patients/patient-slice";
+import { useIntl } from "react-intl";
+import P001 from "../../assets/patient1.png";
+import P002 from "../../assets/patient2.jpeg";
+import P003 from "../../assets/patient3.png";
+import P004 from "../../assets/patient4.jpeg";
+import P005 from "../../assets/patient5.jpeg";
 
 const Patients: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,7 +19,8 @@ const Patients: React.FC = () => {
   const { patients, selectedPatientId } = useSelector(
     (state: RootState) => state.patients
   );
-
+  const patientImages = { P001, P002, P003, P004, P005 };
+  const intl = useIntl();
   React.useEffect(() => {
     if (!selectedPatientId && Object.keys(patients).length > 0) {
       dispatch(selectPatient(Object.keys(patients)[0]));
@@ -27,7 +34,7 @@ const Patients: React.FC = () => {
       <SearchFilter
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        label="Search Patients"
+        label={intl.formatMessage({ id: "search_patients" })}
       />
 
       <Box
@@ -45,7 +52,10 @@ const Patients: React.FC = () => {
           }}
         >
           <Paper sx={{ p: 2, height: "100%" }}>
-            <PatientsCard selectedPatientId={selectedPatientId} />
+            <PatientsCard
+              selectedPatientId={selectedPatientId}
+              patientImages={patientImages}
+            />
           </Paper>
         </Box>
 
@@ -58,6 +68,7 @@ const Patients: React.FC = () => {
           <Paper sx={{ p: 2, height: "100%" }}>
             <PatientsTable
               searchTerm={searchTerm}
+              patientImages={patientImages}
               onSelectPatient={(id) => dispatch(selectPatient(id))}
             />
           </Paper>

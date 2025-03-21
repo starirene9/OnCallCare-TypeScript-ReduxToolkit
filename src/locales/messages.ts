@@ -55,6 +55,30 @@ export const messages: Record<string, Record<string, string>> = {
     chatbot_loading: "Processing...",
     chatbot_input_placeholder: "Enter your message...",
     chatbot_send_button: "Send",
+
+    // Patient Card
+    search_patients: "Search Patients",
+    patient_information: "Patient Information",
+    admission_reason: "Admission Reason",
+    attending_physician: "Attending Physician",
+    next_appointment: "Next Appointment",
+
+    // Patients Table
+    patients_list: "Patients List",
+    total_patients_count: "({count} total)",
+    filter_list: "Filter List",
+    print_list: "Print List",
+    export_data: "Export Data",
+    no_patients_found: 'No patients found matching "{searchTerm}"',
+    clear_search: "Clear Search",
+    status: "Status",
+    actions: "Actions",
+    view_details: "View Details",
+    edit_patient: "Edit Patient",
+    medical_records: "Medical Records",
+    retry: "Retry",
+    loading_patients_data: "Loading patients data",
+    error_loading_patients: "Error loading patient data",
   },
   ko: {
     welcome: "안녕하세요, {name} 👋",
@@ -77,7 +101,7 @@ export const messages: Record<string, Record<string, string>> = {
     patient_percentage: "병동 비율",
     no_doctors: "의사 없음",
 
-    // Navigation
+    // Navigationㅌㅊㅊ
     dashboard: "대시보드",
     patients_menu: "환자",
     alerts: "알림",
@@ -111,6 +135,30 @@ export const messages: Record<string, Record<string, string>> = {
     chatbot_loading: "처리중...",
     chatbot_input_placeholder: "메시지를 입력하세요...",
     chatbot_send_button: "전송",
+
+    // Patient Card
+    search_patients: "환자 검색",
+    patient_information: "환자 정보",
+    admission_reason: "입원 사유",
+    attending_physician: "담당 의사",
+    next_appointment: "다음 예약",
+
+    // 환자 테이블
+    patients_list: "환자 목록",
+    total_patients_count: "({count}명 총계)",
+    filter_list: "목록 필터",
+    print_list: "목록 인쇄",
+    export_data: "데이터 내보내기",
+    no_patients_found: '"{searchTerm}"에 해당하는 환자를 찾을 수 없습니다',
+    clear_search: "검색 지우기",
+    status: "상태",
+    actions: "작업",
+    view_details: "세부 정보 보기",
+    edit_patient: "환자 정보 수정",
+    medical_records: "의료 기록",
+    retry: "재시도",
+    loading_patients_data: "환자 데이터 로딩 중",
+    error_loading_patients: "환자 데이터 로딩 오류",
   },
   es: {
     welcome: "Hola, {name} 👋",
@@ -167,5 +215,30 @@ export const messages: Record<string, Record<string, string>> = {
     chatbot_loading: "Procesando...",
     chatbot_input_placeholder: "Escribe tu mensaje...",
     chatbot_send_button: "Enviar",
+
+    // Patient Card
+    search_patients: "Buscar Pacientes",
+    patient_information: "Información del Paciente",
+    admission_reason: "Motivo de Ingreso",
+    attending_physician: "Médico Tratante",
+    next_appointment: "Próxima Cita",
+
+    // Tabla de Pacientes
+    patients_list: "Lista de Pacientes",
+    total_patients_count: "({count} en total)",
+    filter_list: "Filtrar Lista",
+    print_list: "Imprimir Lista",
+    export_data: "Exportar Datos",
+    no_patients_found:
+      'No se encontraron pacientes que coincidan con "{searchTerm}"',
+    clear_search: "Borrar Búsqueda",
+    status: "Estado",
+    actions: "Acciones",
+    view_details: "Ver Detalles",
+    edit_patient: "Editar Paciente",
+    medical_records: "Historial Médico",
+    retry: "Reintentar",
+    loading_patients_data: "Cargando datos de pacientes",
+    error_loading_patients: "Error al cargar los datos de los pacientes",
   },
 };

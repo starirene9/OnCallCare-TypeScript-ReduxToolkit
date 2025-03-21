@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Card,
@@ -9,37 +9,68 @@ import {
   Chip,
   Stack,
   LinearProgress,
+  Button,
+  IconButton,
+  Tooltip,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
+import EditIcon from "@mui/icons-material/Edit";
+import HistoryIcon from "@mui/icons-material/History";
+import ReplayIcon from "@mui/icons-material/Replay";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
-import { useEffect } from "react";
 import { fetchPatientsData } from "../../features/patients/patient-slice";
 import { getStatusColor } from "../../utils";
+import { useIntl } from "react-intl";
 
 interface PatientCardProps {
   selectedPatientId?: string | null;
+  patientImages: Record<string, string>;
 }
 
-const PatientsCard: React.FC<PatientCardProps> = ({ selectedPatientId }) => {
+const PatientsCard: React.FC<PatientCardProps> = ({
+  selectedPatientId,
+  patientImages,
+}) => {
   const { patients, loading, error } = useSelector(
     (state: RootState) => state.patients
   );
 
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     dispatch(fetchPatientsData());
-  }, []);
+  }, [dispatch]);
 
   const patient = selectedPatientId ? patients[selectedPatientId] : null;
 
   if (loading) {
-    return <LinearProgress />;
+    return <LinearProgress aria-label="Loading patient information" />;
   }
+
   if (error) {
-    return <Typography color="error">{error}</Typography>;
+    return (
+      <Box sx={{ p: 2, textAlign: "center" }}>
+        <Typography color="error" gutterBottom>
+          {error}
+        </Typography>
+        <Button
+          startIcon={<ReplayIcon />}
+          variant="outlined"
+          color="primary"
+          onClick={() => dispatch(fetchPatientsData())}
+          sx={{ mt: 1 }}
+        >
+          Try Again
+        </Button>
+      </Box>
+    );
   }
 
   if (!patient) {
@@ -60,53 +91,147 @@ const PatientsCard: React.FC<PatientCardProps> = ({ selectedPatientId }) => {
   }
 
   return (
-    <Card sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <Box sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-        <Typography variant="subtitle1" component="div" gutterBottom>
-          Patient Information
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 1,
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? 1 : 0,
+        }}
+      >
+        <Typography variant="subtitle1" component="div">
+          {intl.formatMessage({ id: "patient_information" })}
         </Typography>
 
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <Avatar
-            sx={{ width: 80, height: 80, mr: 2 }}
-            alt={patient.name}
-            src={patient.photo}
-          />
-          <Box>
-            <Typography variant="h6">{patient.name}</Typography>
+        {!isMobile && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "auto",
+            }}
+          >
+            <Tooltip title="Edit Patient Information">
+              <IconButton
+                size="small"
+                aria-label="Edit patient information"
+                onClick={() => console.log("Edit patient info")}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="View Patient History">
+              <IconButton
+                size="small"
+                aria-label="View patient history"
+                onClick={() => console.log("View patient history")}
+              >
+                <HistoryIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
+      </Box>
+
+      <Card sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            alignItems: isMobile ? "center" : "flex-start",
+            textAlign: isMobile ? "center" : "left",
+            mb: 2,
+            gap: 2,
+          }}
+        >
+          {!isMobile && (
+            <Avatar
+              sx={{
+                width: 80,
+                height: 80,
+                border: "2px solid",
+                borderColor: "grey.400",
+              }}
+              alt={patient.name}
+              src={patientImages[patient.id] || patient.photo}
+            />
+          )}
+          <Box sx={{ flexGrow: 1, width: isMobile ? "100%" : "auto" }}>
+            <Typography variant={isMobile ? "h6" : "h5"}>
+              {patient.name}
+            </Typography>
             <Typography variant="body2" color="text.secondary">
               {patient.age} years • {patient.gender}
             </Typography>
-            <Chip
-              size="small"
-              color="primary"
-              label={patient.id}
-              sx={{ mt: 1 }}
-            />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                justifyContent: "space-between",
+                alignItems: isMobile ? "center" : "flex-start",
+                mt: 1,
+                gap: isMobile ? 1 : 0,
+              }}
+            >
+              <Chip size="small" color="primary" label={patient.id} />
+              <Chip
+                label={patient.status}
+                color={getStatusColor(patient.status) as any}
+                sx={{ ml: isMobile ? 0 : 1 }}
+              />
+            </Box>
           </Box>
         </Box>
-      </Box>
+      </Card>
 
-      <Divider />
+      <Divider sx={{ my: 2 }} />
 
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Stack spacing={2}>
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Admission Reason
+      <CardContent sx={{ flexGrow: 1, p: 0 }}>
+        <Stack spacing={3}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isMobile ? "center" : "flex-start",
+              textAlign: isMobile ? "center" : "left",
+            }}
+          >
+            <Typography
+              variant="subtitle2"
+              color="text.secondary"
+              gutterBottom
+              sx={{ fontWeight: 600 }}
+            >
+              {intl.formatMessage({ id: "admission_reason" })}
             </Typography>
             <Typography variant="body1">{patient.admissionReason}</Typography>
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <MedicalServicesIcon color="action" sx={{ mr: 1, mt: 0.5 }} />
+          <Divider />
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isMobile ? "center" : "flex-start",
+              textAlign: isMobile ? "center" : "left",
+              gap: 1,
+            }}
+          >
+            {!isMobile && (
+              <MedicalServicesIcon color="primary" sx={{ mb: 1 }} />
+            )}
             <Box>
               <Typography
                 variant="subtitle2"
                 color="text.secondary"
                 gutterBottom
+                sx={{ fontWeight: 600 }}
               >
-                Attending Physician
+                {intl.formatMessage({ id: "attending_physician" })}
               </Typography>
               <Typography variant="body1">{patient.doctor.name}</Typography>
               <Typography variant="body2" color="text.secondary">
@@ -115,32 +240,31 @@ const PatientsCard: React.FC<PatientCardProps> = ({ selectedPatientId }) => {
             </Box>
           </Box>
 
-          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <AccessTimeIcon color="action" sx={{ mr: 1, mt: 0.5 }} />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isMobile ? "center" : "flex-start",
+              textAlign: isMobile ? "center" : "left",
+              gap: 1,
+            }}
+          >
+            {!isMobile && <AccessTimeIcon color="primary" sx={{ mb: 1 }} />}
             <Box>
               <Typography
                 variant="subtitle2"
                 color="text.secondary"
                 gutterBottom
+                sx={{ fontWeight: 600 }}
               >
-                Next Appointment
+                {intl.formatMessage({ id: "next_appointment" })}
               </Typography>
               <Typography variant="body1">{patient.nextAppointment}</Typography>
             </Box>
           </Box>
-
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Status
-            </Typography>
-            <Chip
-              label={patient.status}
-              color={getStatusColor(patient.status) as any}
-            />
-          </Box>
         </Stack>
       </CardContent>
-    </Card>
+    </Box>
   );
 };
 
