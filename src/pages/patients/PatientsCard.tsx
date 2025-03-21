@@ -67,7 +67,7 @@ const PatientsCard: React.FC<PatientCardProps> = ({
           onClick={() => dispatch(fetchPatientsData())}
           sx={{ mt: 1 }}
         >
-          Try Again
+          {intl.formatMessage({ id: "try_again" })}
         </Button>
       </Box>
     );
@@ -84,7 +84,7 @@ const PatientsCard: React.FC<PatientCardProps> = ({
         }}
       >
         <Typography variant="body1" color="text.secondary">
-          No patient selected
+          {intl.formatMessage({ id: "no_patient_selected" })}
         </Typography>
       </Box>
     );
@@ -114,7 +114,7 @@ const PatientsCard: React.FC<PatientCardProps> = ({
               width: "auto",
             }}
           >
-            <Tooltip title="Edit Patient Information">
+            <Tooltip title={intl.formatMessage({ id: "edit_patient_info" })}>
               <IconButton
                 size="small"
                 aria-label="Edit patient information"
@@ -123,7 +123,7 @@ const PatientsCard: React.FC<PatientCardProps> = ({
                 <EditIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-            <Tooltip title="View Patient History">
+            <Tooltip title={intl.formatMessage({ id: "view_patient_history" })}>
               <IconButton
                 size="small"
                 aria-label="View patient history"
@@ -164,7 +164,11 @@ const PatientsCard: React.FC<PatientCardProps> = ({
               {patient.name}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {patient.age} years • {patient.gender}
+              {`${patient.age} ${intl.formatMessage({
+                id: "years",
+              })} • ${intl.formatMessage({
+                id: `gender_${patient.gender.toLowerCase()}`,
+              })}`}
             </Typography>
             <Box
               sx={{
@@ -178,7 +182,9 @@ const PatientsCard: React.FC<PatientCardProps> = ({
             >
               <Chip size="small" color="primary" label={patient.id} />
               <Chip
-                label={patient.status}
+                label={intl.formatMessage({
+                  id: `status_${patient.status.toLowerCase()}`,
+                })}
                 color={getStatusColor(patient.status) as any}
                 sx={{ ml: isMobile ? 0 : 1 }}
               />
@@ -259,7 +265,14 @@ const PatientsCard: React.FC<PatientCardProps> = ({
               >
                 {intl.formatMessage({ id: "next_appointment" })}
               </Typography>
-              <Typography variant="body1">{patient.nextAppointment}</Typography>
+              <Typography variant="body1">
+                {intl.formatDate(new Date(patient.nextAppointment), {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </Typography>
             </Box>
           </Box>
         </Stack>

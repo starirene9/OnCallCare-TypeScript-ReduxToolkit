@@ -56,7 +56,20 @@ export const messages: Record<string, Record<string, string>> = {
     chatbot_input_placeholder: "Enter your message...",
     chatbot_send_button: "Send",
 
+    //status
+    status_admitted: "Admitted",
+    status_critical: "Critical",
+    status_stable: "Stable",
+    status_discharged: "Discharged",
+
     // Patient Card
+    gender_female: "Female",
+    gender_male: "Male",
+    no_patient_selected: "No patient selected",
+    try_again: "Try Again",
+    edit_patient_info: "Edit Patient Information",
+    view_patient_history: "View Patient History",
+    years: "years",
     search_patients: "Search Patients",
     patient_information: "Patient Information",
     admission_reason: "Admission Reason",
@@ -79,6 +92,7 @@ export const messages: Record<string, Record<string, string>> = {
     retry: "Retry",
     loading_patients_data: "Loading patients data",
     error_loading_patients: "Error loading patient data",
+    total_patients_table: "{count} total",
   },
   ko: {
     welcome: "안녕하세요, {name} 👋",
@@ -101,7 +115,7 @@ export const messages: Record<string, Record<string, string>> = {
     patient_percentage: "병동 비율",
     no_doctors: "의사 없음",
 
-    // Navigationㅌㅊㅊ
+    // Navigation
     dashboard: "대시보드",
     patients_menu: "환자",
     alerts: "알림",
@@ -136,7 +150,20 @@ export const messages: Record<string, Record<string, string>> = {
     chatbot_input_placeholder: "메시지를 입력하세요...",
     chatbot_send_button: "전송",
 
+    //status
+    status_admitted: "입원",
+    status_critical: "위급",
+    status_stable: "안정",
+    status_discharged: "퇴원",
+
     // Patient Card
+    gender_female: "여성",
+    gender_male: "남성",
+    no_patient_selected: "선택된 환자가 없습니다",
+    try_again: "다시 시도",
+    edit_patient_info: "환자 정보 수정",
+    view_patient_history: "진료 기록 보기",
+    years: "세",
     search_patients: "환자 검색",
     patient_information: "환자 정보",
     admission_reason: "입원 사유",
@@ -159,6 +186,7 @@ export const messages: Record<string, Record<string, string>> = {
     retry: "재시도",
     loading_patients_data: "환자 데이터 로딩 중",
     error_loading_patients: "환자 데이터 로딩 오류",
+    total_patients_table: "총 {count}명",
   },
   es: {
     welcome: "Hola, {name} 👋",
@@ -216,7 +244,20 @@ export const messages: Record<string, Record<string, string>> = {
     chatbot_input_placeholder: "Escribe tu mensaje...",
     chatbot_send_button: "Enviar",
 
+    //status
+    status_admitted: "Admitido",
+    status_critical: "Crítico",
+    status_stable: "Estable",
+    status_discharged: "Dado de alta",
+
     // Patient Card
+    gender_female: "Femenino",
+    gender_male: "Masculino",
+    no_patient_selected: "No se ha seleccionado ningún paciente",
+    try_again: "Intentar de nuevo",
+    edit_patient_info: "Editar información del paciente",
+    view_patient_history: "Ver historial del paciente",
+    years: "años",
     search_patients: "Buscar Pacientes",
     patient_information: "Información del Paciente",
     admission_reason: "Motivo de Ingreso",
@@ -240,5 +281,6 @@ export const messages: Record<string, Record<string, string>> = {
     retry: "Reintentar",
     loading_patients_data: "Cargando datos de pacientes",
     error_loading_patients: "Error al cargar los datos de los pacientes",
+    total_patients_table: "Total {count} personas",
   },
 };

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { getRandomFutureDate } from "../../utils";
 
 export interface Patient {
   id: string;
@@ -48,7 +49,7 @@ const samplePatients: { [id: string]: Patient } = {
       name: "Dr. Sarah Johnson",
       specialty: "Orthopedic Surgeon",
     },
-    nextAppointment: "March 21, 2025, 10:30 AM",
+    nextAppointment: getRandomFutureDate(),
     status: "Admitted",
     firstSignIn: ["2025-03-15T08:30:00"],
     lastSignOut: [],
@@ -69,7 +70,7 @@ const samplePatients: { [id: string]: Patient } = {
       name: "Dr. Michael Chen",
       specialty: "Pulmonologist",
     },
-    nextAppointment: "March 20, 2025, 9:00 AM",
+    nextAppointment: getRandomFutureDate(),
     status: "Critical",
     firstSignIn: ["2025-03-16T10:15:00"],
     lastSignOut: [],
@@ -90,7 +91,7 @@ const samplePatients: { [id: string]: Patient } = {
       name: "Dr. Lisa Rodriguez",
       specialty: "Cardiologist",
     },
-    nextAppointment: "March 22, 2025, 2:15 PM",
+    nextAppointment: getRandomFutureDate(),
     status: "Stable",
     firstSignIn: ["2025-03-14T15:45:00"],
     lastSignOut: [],
@@ -111,7 +112,7 @@ const samplePatients: { [id: string]: Patient } = {
       name: "Dr. James Wilson",
       specialty: "OB/GYN",
     },
-    nextAppointment: "March 25, 2025, 11:00 AM",
+    nextAppointment: getRandomFutureDate(),
     status: "Discharged",
     firstSignIn: ["2025-03-17T13:20:00"],
     lastSignOut: ["2025-03-19T09:30:00"],
@@ -132,7 +133,7 @@ const samplePatients: { [id: string]: Patient } = {
       name: "Dr. Sarah Johnson",
       specialty: "Orthopedic Surgeon",
     },
-    nextAppointment: "March 23, 2025, 3:30 PM",
+    nextAppointment: getRandomFutureDate(),
     status: "Stable",
     firstSignIn: ["2025-03-12T11:00:00"],
     lastSignOut: [],

@@ -26,6 +26,19 @@ export const getTimeAgo = (timestamp: string): string => {
   return `${Math.floor(diff / 3600)} hours ago`;
 };
 
+export const getRandomFutureDate = (daysAhead = 10): string => {
+  const now = new Date();
+  const randomDays = Math.floor(Math.random() * daysAhead) + 1; // 1~10일 후
+  const randomHours = Math.floor(Math.random() * 8) + 8; // 08:00 ~ 15:00
+  const randomMinutes = Math.floor((Math.random() / 2) * 60); // 0 ~ 29분
+
+  const futureDate = new Date(now);
+  futureDate.setDate(now.getDate() + randomDays);
+  futureDate.setHours(randomHours, randomMinutes, 0, 0);
+
+  return futureDate.toISOString().slice(0, 19); // "YYYY-MM-DDTHH:mm:ss"
+};
+
 export const languageButtons = ["🇰🇷 한국어", "🇺🇸 Eng", "🇪🇸 Esp"];
 
 export const languageCodes = ["ko", "en", "es"];

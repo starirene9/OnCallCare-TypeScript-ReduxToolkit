@@ -95,7 +95,7 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
               startIcon={<ReplayIcon />}
               onClick={handleRetry}
             >
-              Retry
+              {intl.formatMessage({ id: "retry" })}
             </Button>
           }
         >
@@ -109,11 +109,14 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
     return (
       <Box sx={{ p: 3, textAlign: "center" }}>
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-          No patients found matching "{searchTerm}"
+          {intl.formatMessage(
+            { id: "no_patients_found" },
+            { term: searchTerm }
+          )}
         </Typography>
         {searchTerm && (
           <Button variant="outlined" onClick={() => window.location.reload()}>
-            Clear Search
+            {intl.formatMessage({ id: "clear_search" })}
           </Button>
         )}
       </Box>
@@ -140,7 +143,12 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
             color="text.secondary"
             sx={{ ml: 1 }}
           >
-            ({filteredPatients.length} total)
+            (
+            {intl.formatMessage(
+              { id: "total_patients_table" },
+              { count: filteredPatients.length }
+            )}
+            )
           </Typography>
         </Typography>
 
@@ -249,7 +257,11 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
                             {patient.name}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
-                            {patient.age} years • {patient.gender}
+                            {`${patient.age} ${intl.formatMessage({
+                              id: "years",
+                            })} • ${intl.formatMessage({
+                              id: `gender_${patient.gender.toLowerCase()}`,
+                            })}`}
                           </Typography>
                         </Box>
                       </Box>
@@ -276,11 +288,21 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
                       </Box>
                     </TableCell>
                     {!isMobile && (
-                      <TableCell>{patient.nextAppointment}</TableCell>
+                      <TableCell>
+                        {" "}
+                        {intl.formatDate(new Date(patient.nextAppointment), {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </TableCell>
                     )}
                     <TableCell>
                       <Chip
-                        label={patient.status}
+                        label={intl.formatMessage({
+                          id: `status_${patient.status.toLowerCase()}`,
+                        })}
                         color={getStatusColor(patient.status) as any}
                         size="small"
                         sx={{ fontWeight: 500 }}
