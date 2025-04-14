@@ -59,3 +59,5 @@ export const getStatusColor = (status: string) => {
       return "default";
   }
 };
+
+export const statusOptions = ["Stable", "Critical", "Recovering", "Discharged"];

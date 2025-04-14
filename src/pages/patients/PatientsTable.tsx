@@ -26,7 +26,6 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import ReplayIcon from "@mui/icons-material/Replay";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import PrintIcon from "@mui/icons-material/Print";
 import DownloadIcon from "@mui/icons-material/Download";
 import { useSelector, useDispatch } from "react-redux";
@@ -283,7 +282,12 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
                           {patient.doctor.name}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {patient.doctor.specialty}
+                          {intl.formatMessage({
+                            id: patient.doctor.specialty
+                              .toLowerCase()
+                              .replace(/\s/g, "_"),
+                            defaultMessage: patient.doctor.specialty,
+                          })}
                         </Typography>
                       </Box>
                     </TableCell>

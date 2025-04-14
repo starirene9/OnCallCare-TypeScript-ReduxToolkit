@@ -114,15 +114,6 @@ const PatientsCard: React.FC<PatientCardProps> = ({
               width: "auto",
             }}
           >
-            <Tooltip title={intl.formatMessage({ id: "edit_patient_info" })}>
-              <IconButton
-                size="small"
-                aria-label="Edit patient information"
-                onClick={() => console.log("Edit patient info")}
-              >
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
             <Tooltip title={intl.formatMessage({ id: "view_patient_history" })}>
               <IconButton
                 size="small"
