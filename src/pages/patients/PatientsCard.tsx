@@ -257,12 +257,18 @@ const PatientsCard: React.FC<PatientCardProps> = ({
                 {intl.formatMessage({ id: "next_appointment" })}
               </Typography>
               <Typography variant="body1">
-                {intl.formatDate(new Date(patient.nextAppointment), {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                <>
+                  {intl.formatDate(new Date(patient.nextAppointment), {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}{" "}
+                  {intl.formatTime(new Date(patient.nextAppointment), {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </>
               </Typography>
             </Box>
           </Box>

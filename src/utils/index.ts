@@ -60,4 +60,9 @@ export const getStatusColor = (status: string) => {
   }
 };
 
-export const statusOptions = ["Stable", "Critical", "Recovering", "Discharged"];
+export const patientsStatusOptions = [
+  "Admitted",
+  "Critical",
+  "Stable",
+  "Discharged",
+];

@@ -47,7 +47,7 @@ const Patients: React.FC = () => {
       >
         <Box
           sx={{
-            width: { xs: "100%", md: "33.3%" },
+            width: { xs: "100%", md: "25%" },
             height: { xs: "50%", md: "100%" },
           }}
         >
@@ -61,7 +61,7 @@ const Patients: React.FC = () => {
 
         <Box
           sx={{
-            width: { xs: "100%", md: "66.7%" },
+            width: { xs: "100%", md: "75%" },
             height: { xs: "50%", md: "100%" },
           }}
         >

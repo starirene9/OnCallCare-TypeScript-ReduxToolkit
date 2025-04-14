@@ -21,9 +21,13 @@ import {
   useMediaQuery,
   Card,
   Divider,
+  TextField,
+  MenuItem,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save"; // 새로 추가: 저장 아이콘
+import CancelIcon from "@mui/icons-material/Cancel"; // 새로 추가: 취소 아이콘
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import ReplayIcon from "@mui/icons-material/Replay";
 import PrintIcon from "@mui/icons-material/Print";
@@ -32,6 +36,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import { getStatusColor } from "../../utils";
 import { useIntl } from "react-intl";
+import { updatePatient } from "../../features/patients/patient-slice";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { patientsStatusOptions } from "../../utils";
 
 interface PatientsTableProps {
   searchTerm?: string;
@@ -46,16 +56,23 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
 }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [editingPatientId, setEditingPatientId] = useState<string | null>(null);
+  const [editedData, setEditedData] = useState<{
+    doctor?: string;
+    nextAppointment?: string;
+    status?: string;
+  }>({});
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const intl = useIntl();
-
   const dispatch = useDispatch<AppDispatch>();
   const { patients, loading, selectedPatientId, error } = useSelector(
     (state: RootState) => state.patients
   );
 
-  const patientsArray = Object.values(patients); // to make an array
+  const patientsArray = Object.values(patients); // 배열로 변경
 
   const filteredPatients = patientsArray.filter(
     (patient) =>
@@ -277,40 +294,119 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
                       </TableCell>
                     )}
                     <TableCell>
-                      <Box>
-                        <Typography variant="body2" fontWeight={500}>
-                          {patient.doctor.name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {intl.formatMessage({
-                            id: patient.doctor.specialty
-                              .toLowerCase()
-                              .replace(/\s/g, "_"),
-                            defaultMessage: patient.doctor.specialty,
-                          })}
-                        </Typography>
-                      </Box>
+                      {editingPatientId === patient.id ? (
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={editedData.doctor || ""}
+                          onChange={(e) =>
+                            setEditedData({
+                              ...editedData,
+                              doctor: e.target.value,
+                            })
+                          }
+                        >
+                          {[
+                            "Dr. Sarah Johnson",
+                            "Dr. Michael Chen",
+                            "Dr. Lisa Rodriguez",
+                            "Dr. James Wilson",
+                          ].map((name) => (
+                            <MenuItem key={name} value={name}>
+                              {name}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      ) : (
+                        <>
+                          <Typography variant="body2" fontWeight={500}>
+                            {patient.doctor.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {intl.formatMessage({
+                              id: patient.doctor.specialty
+                                .toLowerCase()
+                                .replace(/\s/g, "_"),
+                              defaultMessage: patient.doctor.specialty,
+                            })}
+                          </Typography>
+                        </>
+                      )}
                     </TableCell>
                     {!isMobile && (
                       <TableCell>
-                        {" "}
-                        {intl.formatDate(new Date(patient.nextAppointment), {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {editingPatientId === patient.id ? (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateTimePicker
+                              value={dayjs(
+                                editedData.nextAppointment ||
+                                  patient.nextAppointment
+                              )}
+                              onChange={(newValue) =>
+                                setEditedData({
+                                  ...editedData,
+                                  nextAppointment:
+                                    newValue?.toISOString() || "",
+                                })
+                              }
+                              slotProps={{
+                                textField: { size: "small", fullWidth: true },
+                              }}
+                            />
+                          </LocalizationProvider>
+                        ) : (
+                          <>
+                            {intl.formatDate(
+                              new Date(patient.nextAppointment),
+                              {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}{" "}
+                            {intl.formatTime(
+                              new Date(patient.nextAppointment),
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </>
+                        )}
                       </TableCell>
                     )}
                     <TableCell>
-                      <Chip
-                        label={intl.formatMessage({
-                          id: `status_${patient.status.toLowerCase()}`,
-                        })}
-                        color={getStatusColor(patient.status) as any}
-                        size="small"
-                        sx={{ fontWeight: 500 }}
-                      />
+                      {editingPatientId === patient.id ? (
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={editedData.status || "Admitted"}
+                          onChange={(e) =>
+                            setEditedData({
+                              ...editedData,
+                              status: e.target.value,
+                            })
+                          }
+                        >
+                          {patientsStatusOptions.map((status) => (
+                            <MenuItem key={status} value={status}>
+                              {status}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      ) : (
+                        <Chip
+                          label={intl.formatMessage({
+                            id: `status_${patient.status.toLowerCase()}`,
+                          })}
+                          color={getStatusColor(patient.status) as any}
+                          size="small"
+                          sx={{ fontWeight: 500 }}
+                        />
+                      )}
                     </TableCell>
                     <TableCell align="center">
                       <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -333,21 +429,75 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
                             <VisibilityIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip
-                          title={intl.formatMessage({ id: "edit_patient" })}
-                        >
-                          <IconButton
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Add edit functionality here
-                              console.log("Edit patient", patient.id);
-                            }}
-                            aria-label="Edit patient"
+                        {editingPatientId === patient.id ? (
+                          // 편집 모드인 경우 Save와 Cancel 버튼 표시
+                          <>
+                            <Tooltip title="Save">
+                              <IconButton
+                                size="small"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // 저장 시 updatePatient 액션을 dispatch하여 수정된 데이터를 적용
+                                  dispatch(
+                                    updatePatient({
+                                      id: patient.id,
+                                      doctor: {
+                                        name:
+                                          editedData.doctor ||
+                                          patient.doctor.name,
+                                        specialty: patient.doctor.specialty, // ✅ 이 줄을 꼭 추가해야 타입 오류 없음!
+                                      },
+                                      nextAppointment:
+                                        editedData.nextAppointment ||
+                                        patient.nextAppointment,
+                                      status:
+                                        editedData.status || patient.status,
+                                    })
+                                  );
+                                  setEditingPatientId(null);
+                                  setEditedData({});
+                                }}
+                              >
+                                <SaveIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Cancel">
+                              <IconButton
+                                size="small"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // 취소 시 편집 상태 초기화
+                                  setEditingPatientId(null);
+                                  setEditedData({});
+                                }}
+                              >
+                                <CancelIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          </>
+                        ) : (
+                          // 편집 모드가 아닐 경우 Edit 버튼 표시
+                          <Tooltip
+                            title={intl.formatMessage({ id: "edit_patient" })}
                           >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
+                            <IconButton
+                              size="small"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // Edit 클릭 시 해당 환자 데이터를 편집 상태로 설정
+                                setEditingPatientId(patient.id);
+                                setEditedData({
+                                  doctor: patient.doctor.name,
+                                  nextAppointment: patient.nextAppointment,
+                                  status: patient.status,
+                                });
+                              }}
+                              aria-label="Edit patient"
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                         <Tooltip
                           title={intl.formatMessage({ id: "medical_records" })}
                         >
@@ -355,7 +505,6 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
                             size="small"
                             onClick={(e) => {
                               e.stopPropagation();
-                              // Add medical records functionality here
                               console.log("Open medical records", patient.id);
                             }}
                             aria-label="View medical records"

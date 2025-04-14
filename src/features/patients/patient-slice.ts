@@ -37,114 +37,6 @@ const initialState: PatientsState = {
   selectedPatientId: null,
 };
 
-// const samplePatients: { [id: string]: Patient } = {
-//   P001: {
-//     id: "P001",
-//     name: "John Smith",
-//     age: 45,
-//     gender: "Male",
-//     photo: "/api/placeholder/100/100",
-//     admissionReason: "Post-surgical recovery",
-//     doctor: {
-//       name: "Dr. Sarah Johnson",
-//       specialty: "Orthopedic Surgeon",
-//     },
-//     nextAppointment: getRandomFutureDate(),
-//     status: "Admitted",
-//     firstSignIn: ["2025-03-15T08:30:00"],
-//     lastSignOut: [],
-//     location: {
-//       pastRegionId: "R001",
-//       currentRegionId: "R002",
-//       nextRegionId: "R003",
-//     },
-//   },
-//   P002: {
-//     id: "P002",
-//     name: "Emily Johnson",
-//     age: 32,
-//     gender: "Female",
-//     photo: "/api/placeholder/100/100",
-//     admissionReason: "Pneumonia",
-//     doctor: {
-//       name: "Dr. Michael Chen",
-//       specialty: "Pulmonologist",
-//     },
-//     nextAppointment: getRandomFutureDate(),
-//     status: "Critical",
-//     firstSignIn: ["2025-03-16T10:15:00"],
-//     lastSignOut: [],
-//     location: {
-//       pastRegionId: "R004",
-//       currentRegionId: "R005",
-//       nextRegionId: "",
-//     },
-//   },
-//   P003: {
-//     id: "P003",
-//     name: "Robert Williams",
-//     age: 58,
-//     gender: "Male",
-//     photo: "/api/placeholder/100/100",
-//     admissionReason: "Cardiac monitoring",
-//     doctor: {
-//       name: "Dr. Lisa Rodriguez",
-//       specialty: "Cardiologist",
-//     },
-//     nextAppointment: getRandomFutureDate(),
-//     status: "Stable",
-//     firstSignIn: ["2025-03-14T15:45:00"],
-//     lastSignOut: [],
-//     location: {
-//       pastRegionId: "R006",
-//       currentRegionId: "R007",
-//       nextRegionId: "R008",
-//     },
-//   },
-//   P004: {
-//     id: "P004",
-//     name: "Sophia Garcia",
-//     age: 29,
-//     gender: "Female",
-//     photo: "/api/placeholder/100/100",
-//     admissionReason: "Childbirth",
-//     doctor: {
-//       name: "Dr. James Wilson",
-//       specialty: "OB/GYN",
-//     },
-//     nextAppointment: getRandomFutureDate(),
-//     status: "Discharged",
-//     firstSignIn: ["2025-03-17T13:20:00"],
-//     lastSignOut: ["2025-03-19T09:30:00"],
-//     location: {
-//       pastRegionId: "R009",
-//       currentRegionId: "",
-//       nextRegionId: "",
-//     },
-//   },
-//   P005: {
-//     id: "P005",
-//     name: "David Kim",
-//     age: 67,
-//     gender: "Male",
-//     photo: "/api/placeholder/100/100",
-//     admissionReason: "Hip replacement",
-//     doctor: {
-//       name: "Dr. Sarah Johnson",
-//       specialty: "Orthopedic Surgeon",
-//     },
-//     nextAppointment: getRandomFutureDate(),
-//     status: "Stable",
-//     firstSignIn: ["2025-03-12T11:00:00"],
-//     lastSignOut: [],
-//     location: {
-//       pastRegionId: "R010",
-//       currentRegionId: "R011",
-//       nextRegionId: "R012",
-//     },
-//   },
-// };
-
 const samplePatients: { [id: string]: Patient } = {
   P001: {
     id: "P001",
@@ -268,11 +160,28 @@ export const patientsSlice = createSlice({
     addPatient(state, action: PayloadAction<Patient>) {
       state.patients[action.payload.id] = action.payload;
     },
-    updatePatient(state, action: PayloadAction<Patient>) {
-      state.patients[action.payload.id] = {
-        ...state.patients[action.payload.id],
-        ...action.payload,
-      };
+    updatePatient(
+      state,
+      action: PayloadAction<Partial<Patient> & { id: string }>
+    ) {
+      const { id, ...updates } = action.payload;
+      const existing = state.patients[id];
+      if (existing) {
+        // ✅ doctor가 업데이트될 경우 기존 doctor 객체와 병합
+        const updatedDoctor = updates.doctor
+          ? {
+              ...existing.doctor,
+              ...updates.doctor,
+            }
+          : existing.doctor;
+
+        // ✅ 나머지 업데이트 항목들과 병합하여 환자 상태 업데이트
+        state.patients[id] = {
+          ...existing,
+          ...updates,
+          doctor: updatedDoctor, // 병합된 doctor로 교체
+        };
+      }
     },
     deletePatient(state, action: PayloadAction<string>) {
       delete state.patients[action.payload];
