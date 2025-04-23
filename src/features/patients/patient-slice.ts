@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { getRandomFutureDate } from "../../utils";
+import { RootState } from "../../store/store";
 
 export interface Patient {
   id: string;
@@ -22,6 +23,8 @@ export interface Patient {
     nextRegionId: string;
   };
 }
+
+export type PatientIdName = Pick<Patient, "id" | "name">;
 
 interface PatientsState {
   patients: { [id: string]: Patient };
@@ -130,7 +133,7 @@ const samplePatients: { [id: string]: Patient } = {
     photo: "/api/placeholder/100/100",
     admissionReason: "Heart arrhythmia",
     doctor: {
-      name: "Dr. Sarah Johnson",
+      name: "Dr. Lisa Rodriguez",
       specialty: "Cardiology",
     },
     nextAppointment: getRandomFutureDate(),
@@ -254,3 +257,11 @@ export const {
 } = patientsSlice.actions;
 
 export default patientsSlice.reducer;
+
+// 👇 환자의 id와 name만 반환하는 selector
+export const selectPatientIdNameList = (state: RootState): PatientIdName[] => {
+  return Object.values(state.patients.patients).map(({ id, name }) => ({
+    id,
+    name,
+  }));
+};

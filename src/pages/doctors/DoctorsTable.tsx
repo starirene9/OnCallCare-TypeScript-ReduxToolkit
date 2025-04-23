@@ -37,6 +37,9 @@ import {
   fetchDoctorsData,
   updateDoctor,
 } from "../../features/doctors/doctor-slice";
+import { selectPatientIdNameList } from "../../features/patients/patient-slice";
+import { fetchPatientsData } from "../../features/patients/patient-slice";
+
 interface DoctorsTableProps {
   searchTerm?: string;
   onSelectDoctor: (id: string) => void;
@@ -63,6 +66,9 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
   }>({});
   const [alertDoctorId, setAlertDoctorId] = useState<string | null>(null);
 
+  const [alertPatientId, setAlertPatientId] = useState<string>(""); // 선택된 환자
+  const patientOptions = useSelector(selectPatientIdNameList);
+
   /* ---------------- redux / intl / theme ------------- */
   const intl = useIntl();
   const theme = useTheme();
@@ -80,6 +86,9 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
     }
   }, [dispatch, doctors, loading, error]);
 
+  useEffect(() => {
+    dispatch(fetchPatientsData());
+  }, [dispatch]);
   /* ------------------- filtering --------------------- */
   const doctorsArray = Object.values(doctors);
   const filteredDoctors = doctorsArray.filter(
@@ -394,19 +403,71 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
       >
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            {`Alert for ${alertDoctorId ?? ""}`}
+            {`Create Alert for ${
+              alertDoctorId && doctors[alertDoctorId]?.name
+            }`}
           </Typography>
           <IconButton onClick={() => setAlertDoctorId(null)}>
             <CloseIcon />
           </IconButton>
         </Box>
 
-        {/* Placeholder – replace with real alert form */}
-        <Box sx={{ p: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            📝 Add your alert creation UI here.
-          </Typography>
+        {/* ✅ Alert Form Start */}
+        <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+          {/* 환자 이름 (예시로 고정) */}
+          <TextField
+            select
+            label="Patient"
+            value={alertPatientId}
+            onChange={(e) => setAlertPatientId(e.target.value)}
+            variant="outlined"
+            fullWidth
+            helperText="Choose a patient for this alert"
+          >
+            {Array.isArray(patientOptions) && patientOptions.length > 0 ? (
+              patientOptions.map(({ id, name }) => (
+                <MenuItem key={id} value={id}>
+                  {name ?? "Unknown"}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>No patients available</MenuItem>
+            )}
+          </TextField>
+
+          {/* 알림 시간 체크박스 */}
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              When to alert?
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              <label>
+                <input type="checkbox" /> 30 minutes before
+              </label>
+              <label>
+                <input type="checkbox" /> 1 hour before
+              </label>
+            </Box>
+          </Box>
+
+          {/* 추가 메시지 입력 */}
+          <TextField
+            label="Additional Notes (optional)"
+            multiline
+            rows={3}
+            inputProps={{ maxLength: 300 }}
+            placeholder="Enter message (max 300 characters)"
+            helperText="Max 300 characters"
+            variant="outlined"
+            fullWidth
+          />
+
+          {/* 생성 버튼 */}
+          <Button variant="contained" color="primary">
+            Create Alert
+          </Button>
         </Box>
+        {/* ✅ Alert Form End */}
       </Drawer>
     </>
   );
