@@ -93,13 +93,13 @@ const DoctorsCalendar: React.FC = () => {
             {formattedSelected} - Duty Schedule
           </Typography>
           {scheduleMap[formattedSelected] ? (
-            <TableContainer component={Paper}>
+            <TableContainer>
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Doctor</TableCell>
-                    <TableCell>Patient</TableCell>
-                    <TableCell>Time</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Doctor</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Patient</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Time</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
