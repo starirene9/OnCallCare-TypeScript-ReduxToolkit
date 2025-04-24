@@ -6,6 +6,10 @@ import SearchFilter from "../../components/shared/SearchFilter";
 
 const Doctors: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   return (
     <Box
@@ -32,7 +36,11 @@ const Doctors: React.FC = () => {
           }}
         >
           <Paper sx={{ p: 2, height: "100%" }}>
-            <DoctorsTable searchTerm={searchTerm} />
+            <DoctorsTable
+              searchTerm={searchTerm}
+              onSelectDoctor={(id, name) => setSelectedDoctor({ id, name })} // 🎯
+              selectedDoctorId={selectedDoctor?.id ?? null} // (선택 강조용)
+            />
           </Paper>
         </Box>
 
@@ -43,7 +51,7 @@ const Doctors: React.FC = () => {
           }}
         >
           <Paper sx={{ p: 2, height: "100%" }}>
-            <DoctorsCalender searchTerm={searchTerm} />
+            <DoctorsCalender doctorName={selectedDoctor?.name ?? null} />
           </Paper>
         </Box>
       </Box>

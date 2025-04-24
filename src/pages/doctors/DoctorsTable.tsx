@@ -21,15 +21,12 @@ import {
   TextField,
   MenuItem,
   Divider,
-  Drawer,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import ReplayIcon from "@mui/icons-material/Replay";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import CloseIcon from "@mui/icons-material/Close";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import { useIntl } from "react-intl";
@@ -37,15 +34,14 @@ import {
   fetchDoctorsData,
   updateDoctor,
 } from "../../features/doctors/doctor-slice";
-import { selectPatientIdNameList } from "../../features/patients/patient-slice";
 import { fetchPatientsData } from "../../features/patients/patient-slice";
 
 interface DoctorsTableProps {
   searchTerm?: string;
-  onSelectDoctor: (id: string) => void;
+  onSelectDoctor: (id: string, name: string) => void; // ▲ 수정
+  selectedDoctorId?: string | null; // ▲ 추가 (선택 강조)
 }
 
-// util: replace underscores & Title‑case first letter
 const titleCase = (str: string) => {
   const cleaned = str.replace(/_/g, " ");
   return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
@@ -64,10 +60,6 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
     onCall?: boolean;
     contactInfo?: string;
   }>({});
-  const [alertDoctorId, setAlertDoctorId] = useState<string | null>(null);
-
-  const [alertPatientId, setAlertPatientId] = useState<string>(""); // 선택된 환자
-  const patientOptions = useSelector(selectPatientIdNameList);
 
   /* ---------------- redux / intl / theme ------------- */
   const intl = useIntl();
@@ -89,6 +81,7 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
   useEffect(() => {
     dispatch(fetchPatientsData());
   }, [dispatch]);
+
   /* ------------------- filtering --------------------- */
   const doctorsArray = Object.values(doctors);
   const filteredDoctors = doctorsArray.filter(
@@ -183,7 +176,7 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
                       key={doc.id}
                       hover
                       selected={doc.id === selectedDoctorId}
-                      onClick={() => onSelectDoctor(doc.id)}
+                      onClick={() => onSelectDoctor(doc.id, doc.name)}
                       sx={{
                         cursor: "pointer",
                         "&.Mui-selected": {
@@ -271,8 +264,6 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
                           )}
                         </TableCell>
                       )}
-
-                      {/* Actions */}
                       <TableCell align="center">
                         <Box
                           sx={{
@@ -317,7 +308,6 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
                             </>
                           ) : (
                             <>
-                              {/* View details */}
                               <Tooltip title="View details">
                                 <IconButton
                                   size="small"
@@ -328,7 +318,7 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
                                   }
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    onSelectDoctor(doc.id);
+                                    onSelectDoctor(doc.id, doc.name);
                                   }}
                                 >
                                   <LocalHospitalIcon fontSize="small" />
@@ -352,19 +342,6 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
                                   <EditIcon fontSize="small" />
                                 </IconButton>
                               </Tooltip>
-
-                              {/* Alert */}
-                              <Tooltip title="Send alert">
-                                <IconButton
-                                  size="small"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setAlertDoctorId(doc.id);
-                                  }}
-                                >
-                                  <NotificationsActiveIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
                             </>
                           )}
                         </Box>
@@ -374,9 +351,7 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
               </TableBody>
             </Table>
           </TableContainer>
-
           <Divider />
-
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -393,82 +368,6 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
           />
         </Card>
       </Box>
-
-      {/* ---------------- Alert Drawer ---------------- */}
-      <Drawer
-        anchor="right"
-        open={Boolean(alertDoctorId)}
-        onClose={() => setAlertDoctorId(null)}
-        PaperProps={{ sx: { width: { xs: "100%", md: "33.333%" }, p: 2 } }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            {`Create Alert for ${
-              alertDoctorId && doctors[alertDoctorId]?.name
-            }`}
-          </Typography>
-          <IconButton onClick={() => setAlertDoctorId(null)}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-
-        {/* ✅ Alert Form Start */}
-        <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-          {/* 환자 이름 (예시로 고정) */}
-          <TextField
-            select
-            label="Patient"
-            value={alertPatientId}
-            onChange={(e) => setAlertPatientId(e.target.value)}
-            variant="outlined"
-            fullWidth
-            helperText="Choose a patient for this alert"
-          >
-            {Array.isArray(patientOptions) && patientOptions.length > 0 ? (
-              patientOptions.map(({ id, name }) => (
-                <MenuItem key={id} value={id}>
-                  {name ?? "Unknown"}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem disabled>No patients available</MenuItem>
-            )}
-          </TextField>
-
-          {/* 알림 시간 체크박스 */}
-          <Box>
-            <Typography variant="subtitle2" gutterBottom>
-              When to alert?
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <label>
-                <input type="checkbox" /> 30 minutes before
-              </label>
-              <label>
-                <input type="checkbox" /> 1 hour before
-              </label>
-            </Box>
-          </Box>
-
-          {/* 추가 메시지 입력 */}
-          <TextField
-            label="Additional Notes (optional)"
-            multiline
-            rows={3}
-            inputProps={{ maxLength: 300 }}
-            placeholder="Enter message (max 300 characters)"
-            helperText="Max 300 characters"
-            variant="outlined"
-            fullWidth
-          />
-
-          {/* 생성 버튼 */}
-          <Button variant="contained" color="primary">
-            Create Alert
-          </Button>
-        </Box>
-        {/* ✅ Alert Form End */}
-      </Drawer>
     </>
   );
 };

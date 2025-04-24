@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import { fetchPatientsData } from "../../features/patients/patient-slice";
@@ -15,11 +15,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 
-const DoctorsCalendar: React.FC = () => {
+interface DoctorsCalendarProps {
+  doctorName?: string | null;
+}
+
+const DoctorsCalendar: React.FC<DoctorsCalendarProps> = ({ doctorName }) => {
+  console.log("DoctorsCalendar", doctorName);
   const dispatch = useDispatch<AppDispatch>();
   const { patients, loading } = useSelector(
     (state: RootState) => state.patients
@@ -29,24 +33,34 @@ const DoctorsCalendar: React.FC = () => {
     dispatch(fetchPatientsData());
   }, [dispatch]);
 
-  const scheduleMap: {
-    [date: string]: { doctor: string; patient: string; time: string }[];
-  } = {};
-  Object.values(patients).forEach((patient) => {
-    const date = dayjs(patient.nextAppointment);
-    const formattedDate = date.format("YYYY-MM-DD");
-    const time = date.format("hh:mm A");
-    const entry = { doctor: patient.doctor.name, patient: patient.name, time };
-    if (!scheduleMap[formattedDate]) {
-      scheduleMap[formattedDate] = [entry];
-    } else {
-      scheduleMap[formattedDate].push(entry);
-    }
-  });
+  // ① doctorName 이 주어지면 해당 의사의 환자만 필터
+  const patientsArr = Object.values(patients).filter((p) =>
+    doctorName ? p.doctor.name === doctorName : true
+  );
+
+  const scheduleMap = useMemo(() => {
+    const map: {
+      [d: string]: { doctor: string; patient: string; time: string }[];
+    } = {};
+    patientsArr.forEach((p) => {
+      const d = dayjs(p.nextAppointment);
+      const key = d.format("YYYY-MM-DD");
+      (map[key] ??= []).push({
+        doctor: p.doctor.name,
+        patient: p.name,
+        time: d.format("hh:mm A"),
+      });
+    });
+    return map;
+  }, [patientsArr]);
+
+  const highlightedDates = useMemo(
+    () => Object.keys(scheduleMap),
+    [scheduleMap]
+  );
 
   const [selectedDate, setSelectedDate] = React.useState(dayjs());
   const formattedSelected = selectedDate.format("YYYY-MM-DD");
-  const highlightedDates = Object.keys(scheduleMap);
 
   function CustomDay(
     props: PickersDayProps<Dayjs> & { highlightedDates?: string[] }
@@ -80,17 +94,19 @@ const DoctorsCalendar: React.FC = () => {
       >
         <Box>
           <DateCalendar
+            key={doctorName ?? "all"}
             value={selectedDate}
-            onChange={(newDate) => newDate && setSelectedDate(newDate)}
+            onChange={(d) => d && setSelectedDate(d)}
             slots={{ day: CustomDay }}
             slotProps={{ day: { highlightedDates } as any }}
             sx={{ width: "100%", maxWidth: 500 }}
           />
         </Box>
-
         <Box sx={{ flexGrow: 1 }}>
           <Typography variant="subtitle1" gutterBottom>
-            {formattedSelected} - Duty Schedule
+            {doctorName
+              ? `${doctorName}'s Schedule`
+              : `${formattedSelected} — All Doctors Schedule`}
           </Typography>
           {scheduleMap[formattedSelected] ? (
             <TableContainer>
