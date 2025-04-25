@@ -15,6 +15,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  LinearProgress,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -138,6 +139,7 @@ const DoctorsCalendar: React.FC<DoctorsCalendarProps> = ({ doctorName }) => {
     }
   );
 
+  if (loading) return <LinearProgress aria-label="Loading doctors table" />;
   // 성능 최적화를 위해 displayName 설정
   CustomDay.displayName = "CustomDay";
 
@@ -160,8 +162,8 @@ const DoctorsCalendar: React.FC<DoctorsCalendarProps> = ({ doctorName }) => {
             slots={{ day: CustomDay }}
             slotProps={{ day: { highlightedDates } as any }}
             sx={{ width: "100%", maxWidth: 500 }}
-            // 불필요한 재렌더링 방지를 위한 속성 추가
             disableHighlightToday={false}
+            showDaysOutsideCurrentMonth={true}
           />
         </Box>
         <Box sx={{ flexGrow: 1 }}>
