@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import { fetchPatientsData } from "../../features/patients/patient-slice";
@@ -23,20 +23,26 @@ interface DoctorsCalendarProps {
 }
 
 const DoctorsCalendar: React.FC<DoctorsCalendarProps> = ({ doctorName }) => {
-  console.log("DoctorsCalendar", doctorName);
   const dispatch = useDispatch<AppDispatch>();
   const { patients, loading } = useSelector(
     (state: RootState) => state.patients
   );
+
+  // 이전 선택 날짜 참조
+  const prevSelectedRef = useRef<string | null>(null);
+  // 자동 선택 여부 추적
+  const isAutoSelectingRef = useRef(false);
 
   useEffect(() => {
     dispatch(fetchPatientsData());
   }, [dispatch]);
 
   // ① doctorName 이 주어지면 해당 의사의 환자만 필터
-  const patientsArr = Object.values(patients).filter((p) =>
-    doctorName ? p.doctor.name === doctorName : true
-  );
+  const patientsArr = useMemo(() => {
+    return Object.values(patients).filter((p) =>
+      doctorName ? p.doctor.name === doctorName : true
+    );
+  }, [patients, doctorName]);
 
   const scheduleMap = useMemo(() => {
     const map: {
@@ -59,26 +65,81 @@ const DoctorsCalendar: React.FC<DoctorsCalendarProps> = ({ doctorName }) => {
     [scheduleMap]
   );
 
-  const [selectedDate, setSelectedDate] = React.useState(dayjs());
+  const [selectedDate, setSelectedDate] = React.useState<Dayjs>(dayjs());
   const formattedSelected = selectedDate.format("YYYY-MM-DD");
 
-  function CustomDay(
-    props: PickersDayProps<Dayjs> & { highlightedDates?: string[] }
-  ) {
-    const { day, outsideCurrentMonth, highlightedDates = [], ...other } = props;
-    const formatted = day.format("YYYY-MM-DD");
-    const isSelected = highlightedDates.includes(formatted);
+  // doctorName이 변경될 때마다 처리
+  useEffect(() => {
+    // doctorName이 있고 일정이 있는 경우에만 자동 선택 로직 적용
+    if (doctorName && highlightedDates.length > 0) {
+      // 자동 선택 중임을 표시
+      isAutoSelectingRef.current = true;
 
-    return (
-      <Badge overlap="circular" badgeContent={isSelected ? "⛑️" : undefined}>
-        <PickersDay
-          {...other}
-          day={day}
-          outsideCurrentMonth={outsideCurrentMonth}
-        />
-      </Badge>
-    );
-  }
+      try {
+        // 일정이 있는 날짜들을 정렬
+        const sortedDates = [...highlightedDates].sort();
+
+        // 오늘 또는 미래의 첫 번째 일정 찾기
+        const today = dayjs().format("YYYY-MM-DD");
+        const futureDate = sortedDates.find((date) => date >= today);
+
+        // 미래 일정이 있으면 그 날짜로, 없으면 가장 최근 일정으로 설정
+        const newSelectedDate =
+          futureDate || sortedDates[sortedDates.length - 1];
+
+        if (newSelectedDate && prevSelectedRef.current !== newSelectedDate) {
+          prevSelectedRef.current = newSelectedDate;
+          setSelectedDate(dayjs(newSelectedDate));
+        }
+      } finally {
+        // 자동 선택 완료
+        isAutoSelectingRef.current = false;
+      }
+    }
+  }, [doctorName, highlightedDates]);
+
+  // 날짜 변경 핸들러 - useCallback으로 메모이제이션
+  const handleDateChange = useCallback((date: Dayjs | null) => {
+    // 자동 선택 중일 때는 사용자 클릭 무시
+    if (isAutoSelectingRef.current) return;
+
+    if (date) {
+      const newDateFormatted = date.format("YYYY-MM-DD");
+
+      // 이전과 같은 날짜면 중복 업데이트 방지
+      if (prevSelectedRef.current === newDateFormatted) return;
+
+      prevSelectedRef.current = newDateFormatted;
+      setSelectedDate(date);
+    }
+  }, []);
+
+  // 커스텀 렌더링을 위한 Day 컴포넌트 - 메모이제이션
+  const CustomDay = React.memo(
+    (props: PickersDayProps<Dayjs> & { highlightedDates?: string[] }) => {
+      const {
+        day,
+        outsideCurrentMonth,
+        highlightedDates = [],
+        ...other
+      } = props;
+      const formatted = day.format("YYYY-MM-DD");
+      const isSelected = highlightedDates.includes(formatted);
+
+      return (
+        <Badge overlap="circular" badgeContent={isSelected ? "⛑️" : undefined}>
+          <PickersDay
+            {...other}
+            day={day}
+            outsideCurrentMonth={outsideCurrentMonth}
+          />
+        </Badge>
+      );
+    }
+  );
+
+  // 성능 최적화를 위해 displayName 설정
+  CustomDay.displayName = "CustomDay";
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -94,12 +155,13 @@ const DoctorsCalendar: React.FC<DoctorsCalendarProps> = ({ doctorName }) => {
       >
         <Box>
           <DateCalendar
-            key={doctorName ?? "all"}
             value={selectedDate}
-            onChange={(d) => d && setSelectedDate(d)}
+            onChange={handleDateChange}
             slots={{ day: CustomDay }}
             slotProps={{ day: { highlightedDates } as any }}
             sx={{ width: "100%", maxWidth: 500 }}
+            // 불필요한 재렌더링 방지를 위한 속성 추가
+            disableHighlightToday={false}
           />
         </Box>
         <Box sx={{ flexGrow: 1 }}>
@@ -140,4 +202,4 @@ const DoctorsCalendar: React.FC<DoctorsCalendarProps> = ({ doctorName }) => {
   );
 };
 
-export default DoctorsCalendar;
+export default React.memo(DoctorsCalendar);
