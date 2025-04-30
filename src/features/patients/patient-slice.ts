@@ -22,6 +22,7 @@ export interface Patient {
     currentRegionId: string;
     nextRegionId: string;
   };
+  alertCreated?: boolean;
 }
 
 export type PatientIdName = Pick<Patient, "id" | "name">;
@@ -61,6 +62,7 @@ const samplePatients: { [id: string]: Patient } = {
       currentRegionId: "R002",
       nextRegionId: "R003",
     },
+    alertCreated: false,
   },
   P002: {
     id: "P002",
@@ -82,6 +84,7 @@ const samplePatients: { [id: string]: Patient } = {
       currentRegionId: "R005",
       nextRegionId: "",
     },
+    alertCreated: true,
   },
   P003: {
     id: "P003",
@@ -103,6 +106,7 @@ const samplePatients: { [id: string]: Patient } = {
       currentRegionId: "R007",
       nextRegionId: "R008",
     },
+    alertCreated: false,
   },
   P004: {
     id: "P004",
@@ -124,6 +128,7 @@ const samplePatients: { [id: string]: Patient } = {
       currentRegionId: "",
       nextRegionId: "",
     },
+    alertCreated: false,
   },
   P005: {
     id: "P005",
@@ -145,6 +150,7 @@ const samplePatients: { [id: string]: Patient } = {
       currentRegionId: "R011",
       nextRegionId: "R012",
     },
+    alertCreated: false,
   },
 };
 

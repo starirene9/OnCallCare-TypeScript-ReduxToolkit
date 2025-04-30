@@ -5,9 +5,13 @@ import {
   Button,
   Drawer,
   IconButton,
-  MenuItem,
   TextField,
   Typography,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 
 type PatientOption = { id: string; name: string };
@@ -38,28 +42,38 @@ const AlertDrawer: React.FC<AlertDrawerProps> = ({
   onCreate,
 }) => {
   const [notes, setNotes] = React.useState("");
-  const [offset30, setOffset30] = React.useState(false);
-  const [offset60, setOffset60] = React.useState(false);
+  const [offset, setOffset] = React.useState<30 | 60 | null>(null);
+
+  const currentPatient = patientOptions.find((p) => p.id === alertPatientId);
 
   const handleCreate = () => {
     if (!doctor || !alertPatientId) return;
     onCreate?.({
       doctorId: doctor.id,
       patientId: alertPatientId,
-      offsets: [offset30 && 30, offset60 && 60].filter(Boolean) as number[],
+      offsets: offset ? [offset] : [],
       notes,
     });
     onClose();
   };
+
+  const APP_BAR_HEIGHT = 80;
 
   return (
     <Drawer
       anchor="right"
       open={open}
       onClose={onClose}
-      PaperProps={{ sx: { width: { xs: "100%", md: "33.333%" }, p: 2 } }}
+      PaperProps={{
+        sx: {
+          top: APP_BAR_HEIGHT, // 헤더 바로 아래에서 시작
+          height: `calc(100% - ${APP_BAR_HEIGHT}px)`, // 남은 높이만 사용
+          p: 2,
+          width: { xs: "100%", md: "33%" },
+        },
+      }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           {doctor ? `Create Alert for ${doctor.name}` : "Create Alert"}
         </Typography>
@@ -71,27 +85,15 @@ const AlertDrawer: React.FC<AlertDrawerProps> = ({
       <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
         {/* 환자 선택 */}
         <TextField
-          select
           label="Patient"
-          value={alertPatientId}
-          onChange={(e) => setAlertPatientId(e.target.value)}
+          value={currentPatient?.name ?? "Unknown"}
           variant="outlined"
           fullWidth
-          helperText="Choose a patient for this alert"
-        >
-          {patientOptions.length ? (
-            patientOptions.map(({ id, name }) => (
-              <MenuItem key={id} value={id}>
-                {name ?? "Unknown"}
-              </MenuItem>
-            ))
-          ) : (
-            <MenuItem disabled>No patients available</MenuItem>
-          )}
-        </TextField>
+          InputProps={{ readOnly: true }} // ← 고정! 드롭다운 아님
+        />
 
         {/* 알림 시점 */}
-        <Box>
+        {/* <Box>
           <Typography variant="subtitle2" gutterBottom>
             When to alert?
           </Typography>
@@ -113,13 +115,37 @@ const AlertDrawer: React.FC<AlertDrawerProps> = ({
               1 hour before
             </label>
           </Box>
-        </Box>
+        </Box> */}
+        <FormControl component="fieldset">
+          <FormLabel component="legend" sx={{ fontSize: "0.875rem", mb: 1 }}>
+            When to alert?
+          </FormLabel>
+
+          <RadioGroup
+            value={offset ?? ""}
+            onChange={(_, v) =>
+              setOffset(v === "" ? null : (Number(v) as 30 | 60))
+            }
+            sx={{ gap: 1 }}
+          >
+            <FormControlLabel
+              value={30}
+              control={<Radio size="small" />}
+              label="30 minutes before"
+            />
+            <FormControlLabel
+              value={60}
+              control={<Radio size="small" />}
+              label="1 hour before"
+            />
+          </RadioGroup>
+        </FormControl>
 
         {/* 비고 */}
         <TextField
           label="Additional Notes (optional)"
           multiline
-          rows={3}
+          rows={8}
           inputProps={{ maxLength: 300 }}
           placeholder="Enter message (max 300 characters)"
           helperText={`${notes.length}/300`}
@@ -130,6 +156,7 @@ const AlertDrawer: React.FC<AlertDrawerProps> = ({
         />
 
         <Button
+          sx={{ mt: 3 }}
           variant="contained"
           color="primary"
           disabled={!doctor || !alertPatientId}
