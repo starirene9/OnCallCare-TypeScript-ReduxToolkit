@@ -13,6 +13,9 @@ import {
   FormControlLabel,
   Radio,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import { addAlert } from "../../features/alerts/alert-slice";
 
 type PatientOption = { id: string; name: string };
 type Doctor = { id: string; name: string };
@@ -41,19 +44,22 @@ const AlertDrawer: React.FC<AlertDrawerProps> = ({
   onClose,
   onCreate,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [notes, setNotes] = React.useState("");
   const [offset, setOffset] = React.useState<30 | 60 | null>(null);
 
   const currentPatient = patientOptions.find((p) => p.id === alertPatientId);
 
   const handleCreate = () => {
-    if (!doctor || !alertPatientId) return;
-    onCreate?.({
-      doctorId: doctor.id,
-      patientId: alertPatientId,
-      offsets: offset ? [offset] : [],
-      notes,
-    });
+    if (!doctor || !alertPatientId || offset === null) return;
+    dispatch(
+      addAlert({
+        doctorId: doctor.id,
+        patientId: alertPatientId,
+        offsets: [offset],
+        notes,
+      })
+    );
     onClose();
   };
 
@@ -159,7 +165,7 @@ const AlertDrawer: React.FC<AlertDrawerProps> = ({
           sx={{ mt: 3 }}
           variant="contained"
           color="primary"
-          disabled={!doctor || !alertPatientId}
+          disabled={!doctor || !alertPatientId || offset === null}
           onClick={handleCreate}
         >
           Create Alert

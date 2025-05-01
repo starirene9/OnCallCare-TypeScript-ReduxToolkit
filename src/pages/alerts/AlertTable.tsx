@@ -20,6 +20,7 @@ import {
   Card,
   Divider,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { useSelector, useDispatch } from "react-redux";
@@ -52,7 +53,7 @@ const AlertTable: React.FC<AlertTableProps> = ({
   const { patients, loading, selectedPatientId, error } = useSelector(
     (state: RootState) => state.patients
   );
-
+  const { byPatient, byId } = useSelector((state: RootState) => state.alerts);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [alertPatientId, setAlertPatientId] = useState<string>("");
   const [selectedDoctor, setSelectedDoctor] = useState<
@@ -79,6 +80,9 @@ const AlertTable: React.FC<AlertTableProps> = ({
     setPage(0);
   };
 
+  const alertsByPatient = useSelector(
+    (state: RootState) => state.alerts.byPatient
+  );
   const handleRetry = () => dispatch({ type: "patients/fetchPatientsData" });
 
   if (loading) return <LinearProgress aria-label="Loading alert table" />;
@@ -184,10 +188,22 @@ const AlertTable: React.FC<AlertTableProps> = ({
               {filteredPatients
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((patient) => {
-                  const avatarSrc = patientImages[patient.id] ?? undefined;
-                  const alertCreated = (patient as any).alertCreated as
+                  // 기존 샘플 데이터에 들어왔던 기본값
+                  const defaultAlert = (patient as any).alertCreated as
                     | boolean
                     | undefined;
+
+                  // Redux에 저장된 알림 여부
+                  const hasAlert = Boolean(
+                    alertsByPatient?.[patient.id]?.length
+                  );
+
+                  // 둘 중 하나라도 true면 ⭕️
+                  const alertCreated = defaultAlert || hasAlert;
+                  const avatarSrc = patientImages[patient.id] ?? undefined;
+
+                  const latestId = byPatient[patient.id]?.slice(-1)[0]; // undefined 안전
+                  const note = latestId ? byId[latestId]?.notes ?? "" : "";
                   return (
                     <TableRow
                       key={patient.id}
@@ -288,19 +304,17 @@ const AlertTable: React.FC<AlertTableProps> = ({
                         />
                       </TableCell>
                       <TableCell align="center">
-                        {alertCreated ? (
-                          <CircleOutlined
-                            fontSize="small"
-                            aria-label={intl.formatMessage({ id: "alert_set" })}
-                          />
-                        ) : (
-                          <CloseRoundedIcon
-                            fontSize="small"
-                            aria-label={intl.formatMessage({
-                              id: "alert_not_set",
-                            })}
-                          />
-                        )}
+                        <Tooltip
+                          title={note || "No notes"}
+                          arrow
+                          placement="top"
+                        >
+                          {alertCreated ? (
+                            <CircleOutlined fontSize="small" />
+                          ) : (
+                            <CloseRoundedIcon fontSize="small" />
+                          )}
+                        </Tooltip>
                       </TableCell>
                       <TableCell align="center">
                         <IconButton
