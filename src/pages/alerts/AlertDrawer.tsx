@@ -89,39 +89,13 @@ const AlertDrawer: React.FC<AlertDrawerProps> = ({
       </Box>
 
       <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-        {/* 환자 선택 */}
         <TextField
           label="Patient"
           value={currentPatient?.name ?? "Unknown"}
           variant="outlined"
           fullWidth
-          InputProps={{ readOnly: true }} // ← 고정! 드롭다운 아님
+          InputProps={{ readOnly: true }}
         />
-
-        {/* 알림 시점 */}
-        {/* <Box>
-          <Typography variant="subtitle2" gutterBottom>
-            When to alert?
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <label>
-              <input
-                type="checkbox"
-                checked={offset30}
-                onChange={(e) => setOffset30(e.target.checked)}
-              />{" "}
-              30 minutes before
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={offset60}
-                onChange={(e) => setOffset60(e.target.checked)}
-              />{" "}
-              1 hour before
-            </label>
-          </Box>
-        </Box> */}
         <FormControl component="fieldset">
           <FormLabel component="legend" sx={{ fontSize: "0.875rem", mb: 1 }}>
             When to alert?

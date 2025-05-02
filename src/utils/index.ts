@@ -66,3 +66,18 @@ export const patientsStatusOptions = [
   "Stable",
   "Discharged",
 ];
+
+export const regionNameMap: Record<string, string> = {
+  R001: "Emergency Room", // 예: 대기 구역
+  R002: "Neurology Ward", // Dr. Sarah Johnson
+  R003: "Recovery Room", // 회복 병동
+  R004: "Intensive Care Unit", // ICU
+  R005: "Triage Area", // Dr. Michael Chen (ER 관련)
+  R006: "Cardiology Ward A", // 심장 관련 준비 병동
+  R007: "Cardiac Monitor Room", // Dr. Lisa Rodriguez
+  R008: "Discharge Lounge", // 퇴원 절차
+  R009: "Internal Medicine", // Dr. James Wilson
+  R010: "Heart Check Zone", // 심전도/리듬 측정
+  R011: "Observation Room 7", // 일반 관찰 병동
+  R012: "Post-Op Observation", // 수술 후 경과 관찰 병동
+};

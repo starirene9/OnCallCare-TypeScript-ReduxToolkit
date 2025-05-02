@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Box,
   Table,
@@ -21,27 +21,38 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  Skeleton,
 } from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
+import CircleOutlined from "@mui/icons-material/CircleOutlined";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import { getStatusColor } from "../../utils";
 import { useIntl } from "react-intl";
-import CircleOutlined from "@mui/icons-material/CircleOutlined";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import AlertDrawer from "./AlertDrawer";
 
+/** ------------------------------------------------------------------
+ * Types
+ * ------------------------------------------------------------------*/
 interface AlertTableProps {
   searchTerm?: string;
   onSelectPatient: (id: string) => void;
+  /** Optional map of patient id → avatar URL */
   patientImages?: Record<string, string>;
 }
 
+type DoctorInfo = { id: string; name: string } | undefined;
+
+/** ------------------------------------------------------------------
+ * Component
+ * ------------------------------------------------------------------*/
 const AlertTable: React.FC<AlertTableProps> = ({
   searchTerm = "",
   onSelectPatient,
   patientImages = {},
 }) => {
+  /** ----------------------- hooks & state ------------------------ */
   const intl = useIntl();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -49,42 +60,87 @@ const AlertTable: React.FC<AlertTableProps> = ({
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [alertPatientId, setAlertPatientId] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState<DoctorInfo>();
 
+  /** ----------------------- redux selectors ---------------------- */
   const { patients, loading, selectedPatientId, error } = useSelector(
     (state: RootState) => state.patients
   );
   const { byPatient, byId } = useSelector((state: RootState) => state.alerts);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [alertPatientId, setAlertPatientId] = useState<string>("");
-  const [selectedDoctor, setSelectedDoctor] = useState<
-    { id: string; name: string } | undefined
-  >(undefined);
 
-  const patientsArray = Object.values(patients);
-  const patientOptions = patientsArray.map((p) => ({
-    id: p.id,
-    name: p.name,
-  }));
+  /** ----------------------- derived data ------------------------- */
+  const patientsArray = useMemo(() => Object.values(patients), [patients]);
 
-  const term = searchTerm.toLowerCase();
-  const filteredPatients = patientsArray.filter(
-    (p) =>
-      (p?.name?.toLowerCase().includes(term) ||
-        p?.doctor?.name?.toLowerCase().includes(term)) &&
-      (p.status === "Critical" || p.status === "Admitted")
+  const filteredPatients = useMemo(() => {
+    // Lower‑case once for performance
+    const term = searchTerm.toLowerCase();
+    return patientsArray.filter(
+      (p) =>
+        (p.name.toLowerCase().includes(term) ||
+          p.doctor.name.toLowerCase().includes(term)) &&
+        (p.status === "Critical" || p.status === "Admitted")
+    );
+  }, [patientsArray, searchTerm]);
+
+  /** ----------------------- event handlers ----------------------- */
+  const handleChangePage = useCallback(
+    (_: unknown, newPage: number) => setPage(newPage),
+    []
   );
 
-  const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
-  const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(e.target.value, 10));
-    setPage(0);
+  const handleChangeRowsPerPage = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(e.target.value, 10));
+      setPage(0);
+    },
+    []
+  );
+
+  const handleRetry = useCallback(
+    () => dispatch({ type: "patients/fetchPatientsData" }),
+    [dispatch]
+  );
+
+  const handleCreateAlert = useCallback(
+    (patientId: string, doctorId: string, doctorName: string) => {
+      onSelectPatient(patientId);
+      setAlertPatientId(patientId);
+      setSelectedDoctor({ id: doctorId, name: doctorName });
+      setDrawerOpen(true);
+    },
+    [onSelectPatient]
+  );
+
+  /** ----------------------- render helpers ----------------------- */
+  const renderStatusChip = (status: string) => (
+    <Chip
+      label={intl.formatMessage({ id: `status_${status.toLowerCase()}` })}
+      color={getStatusColor(status) as any}
+      size="small"
+      sx={{ fontWeight: 500 }}
+    />
+  );
+
+  const renderAlertIcon = (patientId: string, defaultCreated?: boolean) => {
+    const hasAlert = Boolean(byPatient?.[patientId]?.length);
+    const alertCreated = defaultCreated || hasAlert;
+    const latestId = byPatient[patientId]?.slice(-1)[0];
+    const note = latestId ? byId[latestId]?.notes ?? "" : "";
+
+    return (
+      <Tooltip title={note || "No notes"} arrow placement="top">
+        {alertCreated ? (
+          <CircleOutlined fontSize="small" />
+        ) : (
+          <CloseRoundedIcon fontSize="small" />
+        )}
+      </Tooltip>
+    );
   };
 
-  const alertsByPatient = useSelector(
-    (state: RootState) => state.alerts.byPatient
-  );
-  const handleRetry = () => dispatch({ type: "patients/fetchPatientsData" });
-
+  /** ----------------------- early returns ------------------------ */
   if (loading) return <LinearProgress aria-label="Loading alert table" />;
 
   if (error) {
@@ -109,7 +165,7 @@ const AlertTable: React.FC<AlertTableProps> = ({
     );
   }
 
-  if (filteredPatients.length === 0) {
+  if (!filteredPatients.length) {
     return (
       <Box sx={{ p: 3, textAlign: "center" }}>
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>
@@ -127,8 +183,10 @@ const AlertTable: React.FC<AlertTableProps> = ({
     );
   }
 
+  /** ----------------------- component ---------------------------- */
   return (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -150,12 +208,16 @@ const AlertTable: React.FC<AlertTableProps> = ({
             (
             {intl.formatMessage(
               { id: "total_patients_table" },
-              { count: filteredPatients.length }
+              {
+                count: filteredPatients.length,
+              }
             )}
             )
           </Typography>
         </Typography>
       </Box>
+
+      {/* Table */}
       <Card
         variant="outlined"
         sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
@@ -178,32 +240,21 @@ const AlertTable: React.FC<AlertTableProps> = ({
                 <TableCell sx={{ fontWeight: "bold" }}>
                   {intl.formatMessage({ id: "status" })}
                 </TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Alert</TableCell>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-                  Create Alert
+                  Alert
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
+                  Create
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {filteredPatients
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((patient) => {
-                  // 기존 샘플 데이터에 들어왔던 기본값
-                  const defaultAlert = (patient as any).alertCreated as
-                    | boolean
-                    | undefined;
+                  const avatarSrc = patientImages[patient.id];
 
-                  // Redux에 저장된 알림 여부
-                  const hasAlert = Boolean(
-                    alertsByPatient?.[patient.id]?.length
-                  );
-
-                  // 둘 중 하나라도 true면 ⭕️
-                  const alertCreated = defaultAlert || hasAlert;
-                  const avatarSrc = patientImages[patient.id] ?? undefined;
-
-                  const latestId = byPatient[patient.id]?.slice(-1)[0]; // undefined 안전
-                  const note = latestId ? byId[latestId]?.notes ?? "" : "";
                   return (
                     <TableRow
                       key={patient.id}
@@ -220,6 +271,7 @@ const AlertTable: React.FC<AlertTableProps> = ({
                         },
                       }}
                     >
+                      {/* Patient */}
                       <TableCell>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Badge
@@ -242,24 +294,30 @@ const AlertTable: React.FC<AlertTableProps> = ({
                               ) : null
                             }
                           >
-                            <Avatar
-                              src={avatarSrc}
-                              sx={{
-                                mr: 2,
-                                width: 40,
-                                height: 40,
-                                border:
-                                  patient.id === selectedPatientId
-                                    ? `2px solid ${theme.palette.primary.main}`
-                                    : "none",
-                              }}
-                            />
+                            {avatarSrc ? (
+                              <Avatar
+                                src={avatarSrc}
+                                sx={{ mr: 2, width: 40, height: 40 }}
+                              />
+                            ) : (
+                              <Skeleton
+                                variant="circular"
+                                width={40}
+                                height={40}
+                                sx={{ mr: 2 }}
+                              />
+                            )}
                           </Badge>
+
                           <Box>
-                            <Typography variant="body1" fontWeight={500}>
+                            <Typography variant="body1" fontWeight={500} noWrap>
                               {patient.name}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              noWrap
+                            >
                               {`${patient.age} ${intl.formatMessage({
                                 id: "years",
                               })} • ${intl.formatMessage({
@@ -269,22 +327,24 @@ const AlertTable: React.FC<AlertTableProps> = ({
                           </Box>
                         </Box>
                       </TableCell>
+
+                      {/* Admission reason */}
                       {!isMobile && (
-                        <TableCell
-                          sx={{
-                            maxWidth: 200,
-                            whiteSpace: "normal",
-                            wordBreak: "break-word",
-                          }}
-                        >
+                        <TableCell sx={{ maxWidth: 200, whiteSpace: "normal" }}>
                           {patient.admissionReason}
                         </TableCell>
                       )}
+
+                      {/* Physician */}
                       <TableCell>
-                        <Typography variant="body2" fontWeight={500}>
+                        <Typography variant="body2" fontWeight={500} noWrap>
                           {patient.doctor.name}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          noWrap
+                        >
                           {intl.formatMessage({
                             id: patient.doctor.specialty
                               .toLowerCase()
@@ -293,45 +353,33 @@ const AlertTable: React.FC<AlertTableProps> = ({
                           })}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={intl.formatMessage({
-                            id: `status_${patient.status.toLowerCase()}`,
-                          })}
-                          color={getStatusColor(patient.status) as any}
-                          size="small"
-                          sx={{ fontWeight: 500 }}
-                        />
-                      </TableCell>
+
+                      {/* Status */}
+                      <TableCell>{renderStatusChip(patient.status)}</TableCell>
+
+                      {/* Alert indicator */}
                       <TableCell align="center">
-                        <Tooltip
-                          title={note || "No notes"}
-                          arrow
-                          placement="top"
-                        >
-                          {alertCreated ? (
-                            <CircleOutlined fontSize="small" />
-                          ) : (
-                            <CloseRoundedIcon fontSize="small" />
-                          )}
-                        </Tooltip>
+                        {renderAlertIcon(
+                          patient.id,
+                          (patient as any).alertCreated
+                        )}
                       </TableCell>
+
+                      {/* Create alert button */}
                       <TableCell align="center">
                         <IconButton
+                          size="small"
                           aria-label={intl.formatMessage({
                             id: "create_alert",
                           })}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onSelectPatient(patient.id);
-                            setAlertPatientId(patient.id);
-                            setSelectedDoctor({
-                              id: patient.doctor.id ?? patient.doctor.name,
-                              name: patient.doctor.name,
-                            });
-                            setDrawerOpen(true);
+                            handleCreateAlert(
+                              patient.id,
+                              patient.doctor.id ?? patient.doctor.name,
+                              patient.doctor.name
+                            );
                           }}
-                          size="small"
                         >
                           <span role="img" aria-label="Create Alert">
                             🚨
@@ -344,6 +392,8 @@ const AlertTable: React.FC<AlertTableProps> = ({
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination */}
         <Divider />
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
@@ -355,22 +405,20 @@ const AlertTable: React.FC<AlertTableProps> = ({
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage={isMobile ? "" : "Rows:"}
           sx={{
-            ".MuiTablePagination-selectLabel": { margin: 0 },
-            ".MuiTablePagination-displayedRows": { margin: 0 },
+            ".MuiTablePagination-selectLabel": { m: 0 },
+            ".MuiTablePagination-displayedRows": { m: 0 },
           }}
         />
       </Card>
+
+      {/* Drawer */}
       <AlertDrawer
         open={drawerOpen}
         doctor={selectedDoctor}
-        patientOptions={patientOptions}
+        patientOptions={patientsArray.map(({ id, name }) => ({ id, name }))}
         alertPatientId={alertPatientId}
         setAlertPatientId={setAlertPatientId}
         onClose={() => setDrawerOpen(false)}
-        onCreate={(params) => {
-          // TODO: 알림 생성 액션(dispatch) 또는 API 호출
-          console.log("create alert:", params);
-        }}
       />
     </Box>
   );

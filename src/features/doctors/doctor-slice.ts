@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { RootState } from "../../store/store";
 
 export interface Doctor {
   id: string;
@@ -114,3 +115,19 @@ export const { addDoctor, updateDoctor, deleteDoctor, selectDoctor } =
   doctorsSlice.actions;
 
 export default doctorsSlice.reducer;
+
+// 해당 병동(regionId)에 있는 의사 찾기
+export const selectDoctorByRegion = (regionId: string) => (state: RootState) =>
+  Object.values(state.doctors.doctors).find(
+    (doctor) => doctor.regionId === regionId
+  );
+
+// 전체 의사 리스트
+export const selectAllDoctors = (state: RootState) =>
+  Object.values(state.doctors.doctors);
+
+// 선택된 의사
+export const selectSelectedDoctor = (state: RootState) =>
+  state.doctors.selectedDoctorId
+    ? state.doctors.doctors[state.doctors.selectedDoctorId]
+    : null;

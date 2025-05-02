@@ -53,10 +53,7 @@ const Alerts: React.FC = () => {
           }}
         >
           <Paper sx={{ p: 2, height: "100%" }}>
-            <NavigationDiagram
-              searchTerm={searchTerm}
-              onSelectPatient={(id) => setSelectedId(id)}
-            />
+            <NavigationDiagram selectedId={selectedId} />
           </Paper>
         </Box>
       </Box>
