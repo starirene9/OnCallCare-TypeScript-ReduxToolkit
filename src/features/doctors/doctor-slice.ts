@@ -19,37 +19,124 @@ interface DoctorsState {
 
 // 🚀 Dummy doctors for prototyping
 const sampleDoctors: { [id: string]: Doctor } = {
+  /* R001 ─────────────────────────────────────────────── */
+  D005: {
+    id: "D005",
+    name: "Dr. Karen Lee",
+    specialty: "Emergency_Medicine",
+    onCall: true,
+    contactInfo: "karen.lee@hospital.org",
+    regionId: "R001", // Emergency Room
+  },
+
+  /* R002 ─────────────────────────────────────────────── */
   D001: {
     id: "D001",
     name: "Dr. Sarah Johnson",
     specialty: "Neurology",
     onCall: true,
     contactInfo: "sarah.johnson@hospital.org",
-    regionId: "R002",
+    regionId: "R002", // Neurology Ward
   },
+
+  /* R003 ─────────────────────────────────────────────── */
+  D006: {
+    id: "D006",
+    name: "Dr. Robert Green",
+    specialty: "Postoperative_Care",
+    onCall: false,
+    contactInfo: "robert.green@hospital.org",
+    regionId: "R003", // Recovery Room
+  },
+
+  /* R004 ─────────────────────────────────────────────── */
+  D007: {
+    id: "D007",
+    name: "Dr. Anika Patel",
+    specialty: "Critical_Care",
+    onCall: true,
+    contactInfo: "anika.patel@hospital.org",
+    regionId: "R004", // Intensive Care Unit
+  },
+
+  /* R005 ─────────────────────────────────────────────── */
   D002: {
     id: "D002",
     name: "Dr. Michael Chen",
-    specialty: "Emergency_Room",
+    specialty: "Emergency_Medicine",
     onCall: false,
     contactInfo: "michael.chen@hospital.org",
-    regionId: "R005",
+    regionId: "R005", // Triage Area
   },
+
+  /* R006 ─────────────────────────────────────────────── */
+  D008: {
+    id: "D008",
+    name: "Dr. David Park",
+    specialty: "Cardiology",
+    onCall: false,
+    contactInfo: "david.park@hospital.org",
+    regionId: "R006", // Cardiology Ward A
+  },
+
+  /* R007 ─────────────────────────────────────────────── */
   D003: {
     id: "D003",
     name: "Dr. Lisa Rodriguez",
     specialty: "Cardiology",
     onCall: true,
     contactInfo: "lisa.rodriguez@hospital.org",
-    regionId: "R007",
+    regionId: "R007", // Cardiac Monitor Room
   },
+
+  /* R008 ─────────────────────────────────────────────── */
+  D009: {
+    id: "D009",
+    name: "Dr. Olivia Kim",
+    specialty: "Hospitalist",
+    onCall: true,
+    contactInfo: "olivia.kim@hospital.org",
+    regionId: "R008", // Discharge Lounge
+  },
+
+  /* R009 ─────────────────────────────────────────────── */
   D004: {
     id: "D004",
     name: "Dr. James Wilson",
     specialty: "Internal_Medicine",
     onCall: false,
     contactInfo: "james.wilson@hospital.org",
-    regionId: "R009",
+    regionId: "R009", // Internal Medicine
+  },
+
+  /* R010 ─────────────────────────────────────────────── */
+  D010: {
+    id: "D010",
+    name: "Dr. William Harris",
+    specialty: "Cardiology",
+    onCall: false,
+    contactInfo: "william.harris@hospital.org",
+    regionId: "R010", // Heart Check Zone
+  },
+
+  /* R011 ─────────────────────────────────────────────── */
+  D011: {
+    id: "D011",
+    name: "Dr. Emily Davis",
+    specialty: "Internal_Medicine",
+    onCall: true,
+    contactInfo: "emily.davis@hospital.org",
+    regionId: "R011", // Observation Room 7
+  },
+
+  /* R012 ─────────────────────────────────────────────── */
+  D012: {
+    id: "D012",
+    name: "Dr. Benjamin Nguyen",
+    specialty: "Surgery",
+    onCall: false,
+    contactInfo: "ben.nguyen@hospital.org",
+    regionId: "R012", // Post‑Op Observation
   },
 };
 

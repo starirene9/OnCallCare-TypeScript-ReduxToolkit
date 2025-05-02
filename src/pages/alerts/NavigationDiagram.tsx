@@ -2,6 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { regionNameMap } from "../../utils";
+import { selectDoctorByRegion } from "../../features/doctors/doctor-slice";
+import Typography from "@mui/material/Typography";
 
 /* ───────────────────── Presentational Components ───────────────────── */
 const RegionNode: React.FC<{
@@ -60,38 +62,50 @@ const NavigationDiagram: React.FC<NavigationDiagramProps> = ({
   selectedId = null,
   patientData = null,
 }) => {
-  // 1️⃣ Prefer explicit patient data if provided
-  const patientFromProp = patientData ?? null;
-
-  const patientFromStore = useSelector(
-    (state: RootState) => state.patients.patients[selectedId ?? ""] ?? null
+  const allPatients = useSelector(
+    (state: RootState) => state.patients.patients
   );
+  const patientList = Object.values(allPatients); // 배열화
 
-  const patient = patientFromProp || patientFromStore;
+  const patientFromProp = patientData ?? null; // 1) 직접 전달
+  const patientFromStore = allPatients[selectedId ?? ""] ?? null; // 2) 선택 ID
+  const fallbackPatient = patientList[0] ?? null; // 3) 첫 번째 환자
 
+  const patient = patientFromProp || patientFromStore || fallbackPatient;
+
+  /* ── ② 환자가 전혀 없으면 빈 상태 처리 ───────────── */
   if (!patient) {
     return (
-      <div className="p-4 text-center text-gray-500">No patient selected</div>
+      <div className="p-4 text-center text-gray-500">
+        No patients in the system
+      </div>
     );
   }
 
-  const patientName = patient.name ?? "Patient";
+  /* ③ 의사 매핑용 selector 호출 */
   const { pastRegionId, currentRegionId, nextRegionId } = patient.location;
 
-  // const allDoctors = useSelector((state: RootState) => state.doctors.doctors);
+  // 빈 문자열 전달로 “조건부 훅 호출” 문제 방지
+  const pastDoctor = useSelector(selectDoctorByRegion(pastRegionId || ""));
+  const currentDoctor = useSelector(selectDoctorByRegion(currentRegionId));
+  const nextDoctor = useSelector(selectDoctorByRegion(nextRegionId || ""));
 
-  // const getDoctorByRegion = (regionId?: string) =>
-  //   Object.values(allDoctors).find((doc) => doc.regionId === regionId)?.name ??
-  //   "—";
+  const getName = (doc: Doctor | undefined | null) => doc?.name ?? "—";
+  const patientName = patient.name ?? "Patient";
 
   return (
     <div className="w-full p-4">
       {/* Header shows “Robert Williams's Route”, for example */}
-      <div className="text-center mb-4 font-bold text-lg">
+      <Typography
+        align="center"
+        variant="h6"
+        fontWeight="bold"
+        sx={{ mb: 4 }} /* MUI spacing(4) = 4 * 8px = 32px */
+      >
         {patientName}&apos;s Route
-      </div>
+      </Typography>
 
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center mt-10">
         {/* Past location */}
         {pastRegionId && (
           <>
@@ -119,7 +133,7 @@ const NavigationDiagram: React.FC<NavigationDiagramProps> = ({
         <Legend color="bg-green-400" label="Next" />
       </div>
       {/* Doctor Info Table (Transposed) */}
-      <div className="mt-6 max-w-md mx-auto">
+      <div className="mt-10 max-w-md mx-auto">
         <table className="table-auto w-full text-sm text-center border">
           <thead>
             <tr className="bg-gray-100">
@@ -132,15 +146,9 @@ const NavigationDiagram: React.FC<NavigationDiagramProps> = ({
           <tbody>
             <tr>
               <td className="px-3 py-2 border font-medium">Doctor</td>
-              {/* <td className="px-3 py-2 border">
-                {getDoctorByRegion(pastRegionId)}
-              </td>
-              <td className="px-3 py-2 border">
-                {getDoctorByRegion(currentRegionId)}
-              </td>
-              <td className="px-3 py-2 border">
-                {getDoctorByRegion(nextRegionId)}
-              </td> */}
+              <td className="px-3 py-2 border">{getName(pastDoctor)}</td>
+              <td className="px-3 py-2 border">{getName(currentDoctor)}</td>
+              <td className="px-3 py-2 border">{getName(nextDoctor)}</td>
             </tr>
           </tbody>
         </table>

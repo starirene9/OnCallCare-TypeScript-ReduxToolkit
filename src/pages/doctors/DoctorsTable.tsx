@@ -53,7 +53,7 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
 }) => {
   /* ------------------ local state ------------------ */
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
   const [editingDoctorId, setEditingDoctorId] = useState<string | null>(null);
   const [editedData, setEditedData] = useState<{
     specialty?: string;
@@ -84,11 +84,13 @@ const DoctorsTable: React.FC<DoctorsTableProps> = ({
 
   /* ------------------- filtering --------------------- */
   const doctorsArray = Object.values(doctors);
-  const filteredDoctors = doctorsArray.filter(
-    (d) =>
-      d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.specialty.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredDoctors = doctorsArray
+    .filter(
+      (d) =>
+        d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        d.specialty.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => Number(b.onCall) - Number(a.onCall));
 
   /* --------------- table helpers -------------------- */
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
