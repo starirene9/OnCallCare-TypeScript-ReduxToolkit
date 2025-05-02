@@ -55,7 +55,7 @@ const PatientsTable: React.FC<PatientsTableProps> = ({
   patientImages,
 }) => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [editingPatientId, setEditingPatientId] = useState<string | null>(null);
   const [editedData, setEditedData] = useState<{

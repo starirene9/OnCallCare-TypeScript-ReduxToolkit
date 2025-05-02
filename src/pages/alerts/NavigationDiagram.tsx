@@ -2,8 +2,12 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { regionNameMap } from "../../utils";
-import { selectDoctorByRegion } from "../../features/doctors/doctor-slice";
+import {
+  selectDoctorByRegion,
+  Doctor,
+} from "../../features/doctors/doctor-slice";
 import Typography from "@mui/material/Typography";
+import { selectLatestAlertForPatient } from "../../features/alerts/alert-slice";
 
 /* ───────────────────── Presentational Components ───────────────────── */
 const RegionNode: React.FC<{
@@ -93,6 +97,9 @@ const NavigationDiagram: React.FC<NavigationDiagramProps> = ({
   const getName = (doc: Doctor | undefined | null) => doc?.name ?? "—";
   const patientName = patient.name ?? "Patient";
 
+  const latestAlert = useSelector(selectLatestAlertForPatient(patient.id));
+  const alertNote = latestAlert?.notes ?? null;
+
   return (
     <div className="w-full p-4">
       {/* Header shows “Robert Williams's Route”, for example */}
@@ -149,6 +156,15 @@ const NavigationDiagram: React.FC<NavigationDiagramProps> = ({
               <td className="px-3 py-2 border">{getName(pastDoctor)}</td>
               <td className="px-3 py-2 border">{getName(currentDoctor)}</td>
               <td className="px-3 py-2 border">{getName(nextDoctor)}</td>
+            </tr>
+            <tr>
+              <td className="px-3 py-2 border font-medium">Alert Note</td>
+              <td
+                className="px-3 py-4 border text-left leading-relaxed"
+                colSpan={3}
+              >
+                {alertNote || "—"}
+              </td>
             </tr>
           </tbody>
         </table>

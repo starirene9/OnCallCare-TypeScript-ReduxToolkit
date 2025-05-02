@@ -130,3 +130,11 @@ export default alertsSlice.reducer;
  */
 export const selectHasAlert = (state: RootState, patientId: string) =>
   Boolean(state.alerts.byPatient[patientId]?.length);
+
+export const selectLatestAlertForPatient =
+  (patientId: string) => (state: RootState) => {
+    const ids = state.alerts.byPatient[patientId];
+    if (!ids?.length) return null;
+    const latestId = ids[ids.length - 1]; // push 순서 그대로면 마지막이 최신
+    return state.alerts.byId[latestId] ?? null;
+  };
