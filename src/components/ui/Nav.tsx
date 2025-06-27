@@ -11,6 +11,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNav } from "../../context/NavContext";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { useIntl } from "react-intl";
+import ScienceIcon from "@mui/icons-material/Science";
 
 const Nav = () => {
   const { isOpen, setIsOpen } = useNav();
@@ -41,6 +42,11 @@ const Nav = () => {
           to: "/alerts",
           icon: <NotificationsActiveIcon />,
           label: intl.formatMessage({ id: "alerts" }),
+        },
+        {
+          to: "/ai-imaging-lab",
+          icon: <ScienceIcon />,
+          label: intl.formatMessage({ id: "ai_imaging_lab" }),
         },
         {
           to: "/emergency-broadcast",
@@ -107,3 +113,4 @@ const Nav = () => {
 };
 
 export default Nav;
+404;

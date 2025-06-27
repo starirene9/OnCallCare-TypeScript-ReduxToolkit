@@ -30,6 +30,7 @@ export const messages: Record<string, Record<string, string>> = {
     nearby_hospitals: "Nearby Hospitals",
     collapse_menu: "Collapse Menu",
     expand_menu: "Expand Menu",
+    ai_imaging_lab: "AI Imaging Lab",
 
     // OpenWeather API
     clear_sky: "Clear Sky",

@@ -8,6 +8,7 @@ import EmergencyBroadcast from "../../pages/emergencyBroadcast/EmergencyBroadcas
 import Hospitals from "../../pages/hospitals/Hospitals";
 import PrivateRoute from "../../rotues/PrivateRoute";
 import PageNotFound from "./PageNotFound";
+import AiImagingLab from "../../pages/aiImagingLab/AiImagingLab";
 
 const Main = () => {
   const { isOpen } = useNav();
@@ -24,6 +25,7 @@ const Main = () => {
         <Route path="/alerts" element={<Alerts />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/alerts" element={<Alerts />} />
+        <Route path="/ai-imaging-lab" element={<AiImagingLab />} />
         <Route element={<PrivateRoute />}>
           <Route path="/emergency-broadcast" element={<EmergencyBroadcast />} />
           <Route path="/nearby-hospitals" element={<Hospitals />} />
