@@ -15,7 +15,13 @@ const AiImagingLab = () => {
   const intl = useIntl();
   const [doctorNote, setDoctorNote] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragEnter = () => setIsDragging(true);
+  const handleDragLeave = () => setIsDragging(false);
 
   const startListening = () => {
     const SpeechRecognition =
@@ -42,6 +48,7 @@ const AiImagingLab = () => {
         setDoctorNote((prev) => prev + finalTranscript);
       }
     };
+
     recognition.onerror = (event) => {
       console.error("Speech recognition error", event.error);
       stopListening();
@@ -59,6 +66,51 @@ const AiImagingLab = () => {
   const stopListening = () => {
     recognitionRef.current?.stop();
     setIsListening(false);
+  };
+
+  const readImageFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (typeof e.target?.result === "string") {
+        setUploadedImageUrl(e.target.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith("image/")) {
+        readImageFile(file);
+      } else {
+        alert("Please upload a valid image file.");
+      }
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  const handleFileInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith("image/")) {
+        readImageFile(file);
+      } else {
+        alert("Please upload a valid image file.");
+      }
+    }
+  };
+
+  const handleClickUploadBox = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -82,17 +134,46 @@ const AiImagingLab = () => {
             })}
           </Typography>
           <Box
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onClick={handleClickUploadBox}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
             sx={{
-              border: "2px dashed gray",
+              border: `2px dashed ${isDragging ? "#1976d2" : "gray"}`,
               height: "90%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              cursor: "pointer",
+              textAlign: "center",
+              px: 2,
             }}
           >
-            <Typography color="textSecondary">
-              Drag & Drop or Click to Upload
-            </Typography>
+            {uploadedImageUrl ? (
+              <Box
+                component="img"
+                src={uploadedImageUrl}
+                alt="Uploaded CT"
+                onError={() => setUploadedImageUrl(null)}
+                sx={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  objectFit: "contain",
+                }}
+              />
+            ) : (
+              <Typography color="textSecondary">
+                Drag & Drop or Click to Upload
+              </Typography>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleFileInputChange}
+            />
           </Box>
         </Paper>
       </Box>
