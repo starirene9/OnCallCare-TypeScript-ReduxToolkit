@@ -142,12 +142,14 @@ const AiImagingLab = () => {
             sx={{
               border: `2px dashed ${isDragging ? "#1976d2" : "gray"}`,
               height: "90%",
+              maxHeight: "calc(100vh - 200px)",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               cursor: "pointer",
               textAlign: "center",
               px: 2,
+              overflow: "hidden",
             }}
           >
             {uploadedImageUrl ? (
@@ -160,6 +162,7 @@ const AiImagingLab = () => {
                   maxWidth: "100%",
                   maxHeight: "100%",
                   objectFit: "contain",
+                  height: "auto",
                 }}
               />
             ) : (
